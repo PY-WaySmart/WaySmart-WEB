@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Usuarios | WaySmart{% endblock %}
+{% block content %}
+<h1>Perfiles de usuario</h1>
+<ul class="list-group">
+    {% for perfil in object_list %}
+    <li class="list-group-item">{{ perfil.usuario }} — {{ perfil.get_rol_display }} ({{ perfil.get_estado_display }})</li>
+    {% empty %}
+    <li class="list-group-item">No hay perfiles registrados.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

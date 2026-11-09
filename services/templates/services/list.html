@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Servicios | WaySmart{% endblock %}
+{% block content %}
+<h1>Servicios</h1>
+<ul class="list-group">
+    {% for servicio in object_list %}
+    <li class="list-group-item">{{ servicio.codigo_servicio }} — {{ servicio.get_estado_display }}</li>
+    {% empty %}
+    <li class="list-group-item">No hay servicios registrados.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

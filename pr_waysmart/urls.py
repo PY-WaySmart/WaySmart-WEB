@@ -1,23 +1,14 @@
 from django.contrib import admin
-from django.urls import path, include
-from django.views.generic import RedirectView
-from pr_waysmart import views
+from django.urls import include, path
+from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('waysmart/', views.fn_inicio),
-    path('', RedirectView.as_view(url='/waysmart/', permanent=False)),
-    
-
-    # Las rutas del app quedan disponibles bajo /waysmart/.
-    path('waysmart/', include('app_destinos_servicios.urls')),
-    path('waysmart/', include('app_empresa_convenios.urls')), 
-    path('waysmart/', include('app_PagosEntrega_TipoPago.urls')),
-    path('waysmart/', include('app_rutas_asignaciones.urls')),
-    path('waysmart/', include('app_usuario_documento.urls')),
-    path("waysmart/", include("app_vehiculos_colores.urls")),
-    
-    path('waysmart/modelo/', include('app_modelo.urls')),
-    path('waysmart/repartidor/', include('app_repartidor.urls')),
-    path('', include('app_PagoRepartidor_SeguimientoGeo.urls')),
+    path("admin/", admin.site.urls),
+    path("", TemplateView.as_view(template_name="home.html"), name="home"),
+    path("usuarios/", include("users.urls")),
+    path("empresas/", include("companies.urls")),
+    path("repartidores/", include("drivers.urls")),
+    path("servicios/", include("services.urls")),
+    path("rutas/", include("routes.urls")),
+    path("pagos/", include("payments.urls")),
 ]

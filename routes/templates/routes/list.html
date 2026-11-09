@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Rutas | WaySmart{% endblock %}
+{% block content %}
+<h1>Rutas</h1>
+<ul class="list-group">
+    {% for ruta in object_list %}
+    <li class="list-group-item">{{ ruta }} — {{ ruta.tipo_ruta }}</li>
+    {% empty %}
+    <li class="list-group-item">No hay rutas registradas.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
