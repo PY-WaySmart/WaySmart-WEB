@@ -14,6 +14,7 @@ __pycache__/
 # Base de datos local de SQLite (recomendado ignorarla para evitar conflictos)
 db.sqlite3
 .env
+.terminal_history.json
 
 # Archivos del sistema y del editor
 .DS_Store
