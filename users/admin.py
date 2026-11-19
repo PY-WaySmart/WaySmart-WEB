@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .models import Perfil
 
@@ -27,6 +27,11 @@ class UserAdmin(BaseUserAdmin):
     )
     list_filter = ("perfil__rol", "perfil__estado", "is_staff", "is_active")
     search_fields = ("username", "email", "first_name", "last_name")
+
+    def get_inline_instances(self, request, obj=None):
+        if not obj:
+            return []
+        return super().get_inline_instances(request, obj)
 
     @admin.display(description="Rol", ordering="perfil__rol")
     def get_rol(self, obj):

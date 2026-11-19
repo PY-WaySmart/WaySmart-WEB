@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Iniciar sesión | WaySmart</title>
+</head>
+<body>
+<main>
+    <h1>WaySmart</h1>
+    <h2>Iniciar sesión</h2>
+    <p>Ingresa tus datos para acceder a tu cuenta.</p>
+
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" action="{% url 'users:login' %}">
+        {% csrf_token %}
+
+        <p>
+            <label for="id_email">Correo electrónico:</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+            <span>{{ form.email.errors }}</span>
+            {% endif %}
+        </p>
+
+        <p>
+            <label for="id_password">Contraseña:</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+            <span>{{ form.password.errors }}</span>
+            {% endif %}
+        </p>
+
+        <p>
+            {{ form.remember_me }}
+            <label for="id_remember_me">Mantener sesión iniciada</label>
+        </p>
+
+        <button type="submit">Iniciar sesión</button>
+    </form>
+
+    <p>
+        ¿Olvidaste tu contraseña?
+        <a href="#">Restablecer contraseña</a>
+    </p>
+</main>
+</body>
+</html>
