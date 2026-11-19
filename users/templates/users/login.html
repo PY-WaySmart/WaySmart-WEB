@@ -1,55 +1,65 @@
-<!doctype html>
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Iniciar sesión | WaySmart</title>
-</head>
-<body>
-<main>
-    <h1>WaySmart</h1>
-    <h2>Iniciar sesión</h2>
-    <p>Ingresa tus datos para acceder a tu cuenta.</p>
+{% extends "base.html" %}
 
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+{% block title %}Iniciar sesión | WaySmart{% endblock %}
 
-    <form method="post" action="{% url 'users:login' %}">
-        {% csrf_token %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 mb-2">WaySmart</h1>
+                <h2 class="h5 mb-3">Iniciar sesión</h2>
+                <p class="text-body-secondary">
+                    Ingresa tus datos para acceder a tu cuenta.
+                </p>
 
-        <p>
-            <label for="id_email">Correo electrónico:</label>
-            {{ form.email }}
-            {% if form.email.errors %}
-            <span>{{ form.email.errors }}</span>
-            {% endif %}
-        </p>
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
 
-        <p>
-            <label for="id_password">Contraseña:</label>
-            {{ form.password }}
-            {% if form.password.errors %}
-            <span>{{ form.password.errors }}</span>
-            {% endif %}
-        </p>
+                <form method="post" action="{% url 'users:login' %}">
+                    {% csrf_token %}
 
-        <p>
-            {{ form.remember_me }}
-            <label for="id_remember_me">Mantener sesión iniciada</label>
-        </p>
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            Correo electrónico
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
 
-        <button type="submit">Iniciar sesión</button>
-    </form>
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">
+                            Contraseña
+                        </label>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <div class="text-danger small">{{ form.password.errors }}</div>
+                        {% endif %}
+                    </div>
 
-    <p>
-        ¿Olvidaste tu contraseña?
-        <a href="#">Restablecer contraseña</a>
-    </p>
-</main>
-</body>
-</html>
+                    <div class="form-check mb-3">
+                        {{ form.remember_me }}
+                        <label for="{{ form.remember_me.id_for_label }}" class="form-check-label">
+                            Mantener sesión iniciada
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Iniciar sesión
+                    </button>
+                </form>
+
+                <p class="mt-3 mb-0">
+                    ¿Olvidaste tu contraseña?
+                    <a href="#">Restablecer contraseña</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
