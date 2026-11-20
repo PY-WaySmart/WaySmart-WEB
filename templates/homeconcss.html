@@ -1,0 +1,209 @@
+{% extends 'baseconcss.html' %}
+
+{% block title %}WaySmart | Unimos Caminos, Optimizamos Destinos{% endblock %}
+
+{% block content %}
+
+    <!-- 1. HERO PRINCIPAL CON VISTA PREVIA INTERACTIVA -->
+    <section class="py-5 bg-white border-bottom">
+        <div class="container py-4">
+            <div class="row align-items-center g-5">
+                <!-- Columna izquierda: Texto y botones -->
+                <div class="col-lg-6 text-center text-lg-start">
+                <span class="badge rounded-pill text-bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2 mb-3">
+                    <i class="bi bi-stars me-1"></i> Plataforma Logística con Inteligencia Artificial
+                </span>
+                    <h1 class="display-4 fw-bold mb-3">
+                        Unimos Caminos, <span class="text-primary">Optimizamos Destinos</span>
+                    </h1>
+                    <p class="lead text-secondary mb-4">
+                        Conecta tu empresa con repartidores verificados. Planifica rutas inteligentes en tiempo real, reduce tiempos de entrega y garantiza cada paquete con firma digital.
+                    </p>
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
+                        <a href="/login/" class="btn btn-primary btn-lg px-4 py-3 fw-semibold shadow-sm">
+                            Iniciar sesión <i class="bi bi-box-arrow-in-right ms-2"></i>
+                        </a>
+                        <a href="/registro/" class="btn btn-outline-dark btn-lg px-4 py-3 fw-semibold">
+                            Unirme como repartidor
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Columna derecha: Tarjeta visual simulando la App -->
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3 px-4">
+                            <span class="fw-semibold"><i class="bi bi-cpu text-primary me-2"></i>Motor de Ruta IA · En vivo</span>
+                            <span class="badge bg-success">Activo</span>
+                        </div>
+                        <div class="card-body p-4 bg-light">
+                            <div class="bg-white p-3 rounded-3 border mb-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted d-block">Ruta Principal Recomendada</small>
+                                    <strong class="text-dark">Centro Empresarial → Zona Norte (8 entregas)</strong>
+                                </div>
+                                <span class="badge bg-primary fs-6">24 min</span>
+                            </div>
+                            <div class="row g-2 mb-3 text-center">
+                                <div class="col-4">
+                                    <div class="bg-white p-2 rounded-3 border">
+                                        <small class="text-muted d-block">Alternativas</small>
+                                        <strong class="text-primary">3 Rutas IA</strong>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="bg-white p-2 rounded-3 border">
+                                        <small class="text-muted d-block">GPS Vivo</small>
+                                        <strong class="text-success">&lt; 15 seg</strong>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="bg-white p-2 rounded-3 border">
+                                        <small class="text-muted d-block">Ganancia</small>
+                                        <strong class="text-dark">90% Neta</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-success mb-0 py-2 small d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                                <span>Entrega confirmada mediante <strong>Firma Digital</strong> y comprobante generado.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. CÓMO FUNCIONA (PASO A PASO) -->
+    <section id="como-funciona" class="py-5">
+        <div class="container py-3">
+            <div class="text-center mb-5">
+                <span class="text-primary fw-bold text-uppercase small">Flujo Operativo</span>
+                <h2 class="fw-bold mt-1">¿Cómo funciona WaySmart?</h2>
+                <p class="text-secondary">Un ecosistema conectado desde la solicitud hasta la entrega final.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm text-center p-3 rounded-4">
+                        <div class="card-body">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                                <strong>1</strong>
+                            </div>
+                            <h5 class="fw-bold">Solicitud</h5>
+                            <p class="text-secondary small mb-0">Las empresas aliadas registran sus envíos express, programados o por volumen.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm text-center p-3 rounded-4">
+                        <div class="card-body">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                                <strong>2</strong>
+                            </div>
+                            <h5 class="fw-bold">Asignación</h5>
+                            <p class="text-secondary small mb-0">Repartidores validados con vehículo aprobado aceptan los servicios disponibles.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm text-center p-3 rounded-4">
+                        <div class="card-body">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                                <strong>3</strong>
+                            </div>
+                            <h5 class="fw-bold">Ruta con IA</h5>
+                            <p class="text-secondary small mb-0">Nuestra IA calcula 4 rutas óptimas analizando tráfico y distancias en tiempo real.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm text-center p-3 rounded-4">
+                        <div class="card-body">
+                            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <h5 class="fw-bold">Entrega Segura</h5>
+                            <p class="text-secondary small mb-0">Validación con firma digital del cliente, pago registrado y liquidación transparente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. ROLES DE LA PLATAFORMA -->
+    <section id="roles" class="py-5 bg-white border-top border-bottom">
+        <div class="container py-3">
+            <div class="text-center mb-5">
+                <span class="text-primary fw-bold text-uppercase small">Perfiles del Sistema</span>
+                <h2 class="fw-bold mt-1">Diseñado para cada actor logístico</h2>
+            </div>
+
+            <div class="row g-4">
+                <!-- Empresas -->
+                <div class="col-md-4">
+                    <div class="card h-100 border shadow-sm rounded-4 p-3">
+                        <div class="card-body">
+                            <i class="bi bi-buildings fs-1 text-primary mb-3 d-block"></i>
+                            <h4 class="fw-bold">Empresas Aliadas</h4>
+                            <p class="text-secondary small">Optimiza tu operación logística sin mantener flotas propias.</p>
+                            <ul class="list-unstyled small text-secondary mt-3">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Convenios flexibles y por volumen</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Monitoreo GPS de tus pedidos</li>
+                                <li><i class="bi bi-check-circle-fill text-primary me-2"></i>Historial y trazabilidad completa</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Repartidores -->
+                <div class="col-md-4">
+                    <div class="card h-100 border-primary border-2 shadow rounded-4 p-3">
+                        <div class="card-body">
+                            <i class="bi bi-bicycle fs-1 text-primary mb-3 d-block"></i>
+                            <h4 class="fw-bold">Repartidores</h4>
+                            <p class="text-secondary small">Maximiza tus ingresos con rutas inteligentes y pagos claros.</p>
+                            <ul class="list-unstyled small text-secondary mt-3">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>90% de ganancia neta</strong> por servicio</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>4 opciones de ruta calculadas por IA</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Control de pagos en efectivo o transferencia</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Administradores -->
+                <div class="col-md-4">
+                    <div class="card h-100 border shadow-sm rounded-4 p-3">
+                        <div class="card-body">
+                            <i class="bi bi-shield-lock fs-1 text-dark mb-3 d-block"></i>
+                            <h4 class="fw-bold">Administradores</h4>
+                            <p class="text-secondary small">Control total, seguridad documental y auditoría en tiempo real.</p>
+                            <ul class="list-unstyled small text-secondary mt-3">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Validación de SOAT, licencias y RUT</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Gestión de convenios y comisiones</li>
+                                <li><i class="bi bi-check-circle-fill text-dark me-2"></i>Alertas de desvío y soporte activo</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. LLAMADO A LA ACCIÓN FINAL (CTA) -->
+    <section id="tecnologia" class="py-5 bg-primary text-white text-center">
+        <div class="container py-3">
+            <h2 class="fw-bold mb-3">¿Listo para optimizar tus entregas?</h2>
+            <p class="lead mb-4 mx-auto" style="max-width: 600px;">
+                Ingresa ahora con tu cuenta o regístrate para formar parte de la red logística inteligente de WaySmart.
+            </p>
+            <a href="/login/" class="btn btn-light btn-lg fw-bold text-primary px-5 py-3 shadow">
+                Acceder a WaySmart <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </section>
+
+{% endblock %}

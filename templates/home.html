@@ -1,8 +1,111 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}WaySmart | Inicio{% endblock %}
+{% block title %}WaySmart | Unimos Caminos, Optimizamos Destinos{% endblock %}
 
 {% block content %}
-<h1>WaySmart</h1>
-<p>Base del proyecto para el equipo.</p>
+
+    <!-- 1. SECCIÓN PRINCIPAL DE BIENVENIDA -->
+    <section>
+        <div>
+            <span>Plataforma Logística con Inteligencia Artificial</span>
+            <h1>Unimos Caminos, Optimizamos Destinos</h1>
+            <p>
+                Conecta tu empresa con repartidores verificados. Planifica rutas inteligentes en tiempo real, reduce tiempos de entrega y garantiza cada paquete con firma digital.
+            </p>
+            <div>
+                <a href="/login/">Iniciar sesión</a>
+                <a href="/registro/">Unirme como repartidor</a>
+            </div>
+        </div>
+
+        <!-- Resumen de métricas clave -->
+        <aside>
+            <h2>Motor de Ruta IA · En vivo</h2>
+            <p><strong>Ruta Principal Recomendada:</strong> Centro Empresarial → Zona Norte (8 entregas) — 24 min</p>
+            <ul>
+                <li><strong>Alternativas:</strong> 3 Rutas IA</li>
+                <li><strong>GPS Vivo:</strong> &lt; 15 seg</li>
+                <li><strong>Ganancia:</strong> 90% Neta</li>
+            </ul>
+            <p>Entrega confirmada mediante <strong>Firma Digital</strong> y comprobante generado.</p>
+        </aside>
+    </section>
+
+    <!-- 2. CÓMO FUNCIONA -->
+    <section id="como-funciona">
+        <header>
+            <span>Flujo Operativo</span>
+            <h2>¿Cómo funciona WaySmart?</h2>
+            <p>Un ecosistema conectado desde la solicitud hasta la entrega final.</p>
+        </header>
+
+        <ol>
+            <li>
+                <h3>1. Solicitud</h3>
+                <p>Las empresas aliadas registran sus envíos express, programados o por volumen.</p>
+            </li>
+            <li>
+                <h3>2. Asignación</h3>
+                <p>Repartidores validados con vehículo aprobado aceptan los servicios disponibles.</p>
+            </li>
+            <li>
+                <h3>3. Ruta con IA</h3>
+                <p>Nuestra IA calcula 4 rutas óptimas analizando tráfico y distancias en tiempo real.</p>
+            </li>
+            <li>
+                <h3>4. Entrega Segura</h3>
+                <p>Validación con firma digital del cliente, pago registrado y liquidación transparente.</p>
+            </li>
+        </ol>
+    </section>
+
+    <!-- 3. ROLES DE LA PLATAFORMA -->
+    <section id="roles">
+        <header>
+            <span>Perfiles del Sistema</span>
+            <h2>Diseñado para cada actor logístico</h2>
+        </header>
+
+        <div>
+            <article>
+                <h3>Empresas Aliadas</h3>
+                <p>Optimiza tu operación logística sin mantener flotas propias.</p>
+                <ul>
+                    <li>Convenios flexibles y por volumen</li>
+                    <li>Monitoreo GPS de tus pedidos</li>
+                    <li>Historial y trazabilidad completa</li>
+                </ul>
+            </article>
+
+            <article>
+                <h3>Repartidores</h3>
+                <p>Maximiza tus ingresos con rutas inteligentes y pagos claros.</p>
+                <ul>
+                    <li><strong>90% de ganancia neta</strong> por servicio</li>
+                    <li>4 opciones de ruta calculadas por IA</li>
+                    <li>Control de pagos en efectivo o transferencia</li>
+                </ul>
+            </article>
+
+            <article>
+                <h3>Administradores</h3>
+                <p>Control total, seguridad documental y auditoría en tiempo real.</p>
+                <ul>
+                    <li>Validación de SOAT, licencias y RUT</li>
+                    <li>Gestión de convenios y comisiones</li>
+                    <li>Alertas de desvío y soporte activo</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <!-- 4. LLAMADO A LA ACCIÓN FINAL -->
+    <section id="tecnologia">
+        <h2>¿Listo para optimizar tus entregas?</h2>
+        <p>
+            Ingresa ahora con tu cuenta o regístrate para formar parte de la red logística inteligente de WaySmart.
+        </p>
+        <a href="/login/">Acceder a WaySmart</a>
+    </section>
+
 {% endblock %}
