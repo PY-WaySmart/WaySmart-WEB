@@ -22,13 +22,14 @@ class Perfil(models.Model):
     rol = models.CharField(
         max_length=20,
         choices=Rol.choices,
-        # Obligatorio: sin blank=True ni null=True
     )
     estado = models.CharField(
         max_length=20,
         choices=Estado.choices,
         default=Estado.PENDIENTE,
     )
+    intentos_fallidos = models.PositiveSmallIntegerField(default=0)
+    bloqueado_hasta = models.DateTimeField(null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
 
