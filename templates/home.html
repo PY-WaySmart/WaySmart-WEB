@@ -1,8 +1,95 @@
 {% extends "base.html" %}
 
-{% block title %}WaySmart | Inicio{% endblock %}
+{% block title %}WaySmart | Unimos Caminos{% endblock %}
 
 {% block content %}
-<h1>WaySmart</h1>
-<p>Base del proyecto para el equipo.</p>
+
+    <!-- HERO ESCENARIO TIPO SAMSUNG -->
+    <section class="py-5">
+        <div class="container py-4">
+            <div class="row align-items-center g-5">
+                <!-- Izquierda: Titular limpio + Botones píldora -->
+                <div class="col-lg-5 text-center text-lg-start reveal-up">
+                <span class="font-mono-ws text-info text-uppercase d-block mb-2">
+                    ⚡ Plataforma Logística IA
+                </span>
+                    <h1 class="display-3 ws-hero-title mb-3">
+                        Unimos Caminos,<br>Optimizamos Destinos
+                    </h1>
+                    <p class="mb-4" style="color: var(--ice-muted);">
+                        Entregas inteligentes en tiempo real para empresas y repartidores.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+                        <a href="/login/" class="btn btn-ws-pill-solid">
+                            Comenzar ahora
+                        </a>
+                        <a href="/registro/" class="btn btn-ws-pill-outline">
+                            Soy repartidor
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Derecha: Marca de agua gigante + Radar flotante -->
+                <div class="col-lg-7 position-relative reveal-up delay-1">
+                    <div class="ws-watermark text-end mb-n3 d-none d-md-block">
+                        SMART<br>ROUTES
+                    </div>
+
+                    <div class="ws-stage-box">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="font-mono-ws text-info">
+                            <i class="bi bi-broadcast me-2"></i>RUTA ÓPTIMA · POPAYÁN
+                        </span>
+                            <span class="badge rounded-pill bg-success bg-opacity-25 text-success font-mono-ws">
+                            ● EN VIVO
+                        </span>
+                        </div>
+
+                        <!-- Mapa animado -->
+                        <div class="p-3 rounded-4 mb-3" style="background: rgba(6, 11, 25, 0.85); border: 1px solid rgba(56, 189, 248, 0.18);">
+                            <svg viewBox="0 0 420 145" class="w-100" style="height: 145px;">
+                                <path d="M0 38 H420 M0 108 H420 M105 0 V145 M210 0 V145 M315 0 V145" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+                                <path d="M 40 110 Q 200 135 375 35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-dasharray="4 4" />
+                                <path d="M 40 110 C 140 20, 260 110, 375 35" fill="none" stroke="#38bdf8" stroke-width="4" class="route-stream" />
+                                <circle cx="40" cy="110" r="6" fill="#2563eb" />
+                                <circle cx="375" cy="35" r="6" fill="#22c55e" class="gps-beacon" />
+                                <circle cx="375" cy="35" r="6" fill="#22c55e" />
+                            </svg>
+                            <div class="d-flex justify-content-between font-mono-ws mt-2" style="color: var(--ice-muted);">
+                                <span>📍 Origen</span>
+                                <span class="text-info fw-bold">4 Rutas IA · 24 min</span>
+                                <span>🏁 Destino</span>
+                            </div>
+                        </div>
+
+                        <!-- 3 indicadores rápidos -->
+                        <div id="beneficios" class="row g-3 text-center">
+                            <div class="col-4">
+                                <div class="ws-mini-tile">
+                                    <span class="fs-3 d-block mb-1">💸</span>
+                                    <strong class="d-block">90% Neta</strong>
+                                    <small style="color: var(--ice-muted);">Ganancia</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="ws-mini-tile">
+                                    <span class="fs-3 d-block mb-1">🛰️</span>
+                                    <strong class="d-block">&lt; 15 seg</strong>
+                                    <small style="color: var(--ice-muted);">GPS Vivo</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="ws-mini-tile">
+                                    <span class="fs-3 d-block mb-1">✍️</span>
+                                    <strong class="d-block">Digital</strong>
+                                    <small style="color: var(--ice-muted);">Firma</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 {% endblock %}

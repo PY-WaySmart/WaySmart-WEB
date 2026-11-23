@@ -1,0 +1,213 @@
+/* =========================================================
+   WAYSMART — COBALT & DEEP NAVY PREMIUM UI
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root {
+    --bg-abyss: #060b19;
+    --bg-navy: #0b1636;
+    --bg-cobalt: #1d4ed8;
+    --bg-royal: #2563eb;
+    --cyan-bright: #38bdf8;
+    --green-pulse: #22c55e;
+
+    --white: #ffffff;
+    --ice-muted: #cbd5e1;
+    --glass-surface: rgba(11, 22, 54, 0.68);
+    --glass-border: rgba(56, 189, 248, 0.22);
+
+    --font-display: 'Outfit', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-abyss) 0%, var(--bg-navy) 55%, #132a63 100%);
+    background-attachment: fixed;
+    color: var(--white);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Plano diagonal azul eléctrico estilo Samsung */
+body::before {
+    content: "";
+    position: fixed;
+    top: -15%;
+    right: -12%;
+    width: 58vw;
+    height: 130vh;
+    background: linear-gradient(160deg, rgba(37, 99, 235, 0.42) 0%, rgba(29, 78, 216, 0.14) 70%, transparent 100%);
+    transform: skewX(-16deg);
+    pointer-events: none;
+    z-index: 0;
+}
+
+nav, main, footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* --- NAVBAR ULTRA LIMPIA --- */
+.ws-navbar {
+    background: rgba(6, 11, 25, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ws-brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--white);
+}
+
+.ws-navbar .nav-link {
+    color: var(--ice-muted);
+    font-weight: 500;
+    font-size: 0.92rem;
+    transition: color 0.2s ease;
+}
+
+.ws-navbar .nav-link:hover {
+    color: var(--white);
+}
+
+/* --- TITULARES --- */
+.ws-hero-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.03;
+}
+
+.ws-watermark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(3.2rem, 7vw, 5.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: rgba(56, 189, 248, 0.14);
+    user-select: none;
+}
+
+.font-mono-ws {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+/* --- BOTONES --- */
+.btn-ws-pill-outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 999px;
+    padding: 0.7rem 1.8rem;
+    font-weight: 600;
+    transition: all 0.22s ease;
+}
+
+.btn-ws-pill-outline:hover {
+    background: var(--white);
+    color: var(--bg-abyss);
+    border-color: var(--white);
+    transform: translateY(-2px);
+}
+
+.btn-ws-pill-solid {
+    background: var(--white);
+    color: var(--bg-abyss);
+    border: none;
+    border-radius: 999px;
+    padding: 0.72rem 1.85rem;
+    font-weight: 700;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transition: all 0.22s ease;
+}
+
+.btn-ws-pill-solid:hover {
+    background: var(--cyan-bright);
+    color: var(--bg-abyss);
+    transform: translateY(-2px);
+}
+
+/* --- TARJETAS CRISTAL AZUL --- */
+.ws-stage-box {
+    background: var(--glass-surface);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 26px;
+    padding: 1.8rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.ws-stage-box:hover {
+    transform: translateY(-5px);
+    border-color: var(--cyan-bright);
+}
+
+.ws-mini-tile {
+    background: rgba(6, 11, 25, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 1.25rem;
+    transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.ws-mini-tile:hover {
+    transform: translateY(-4px);
+    background: rgba(37, 99, 235, 0.22);
+}
+
+/* --- RADAR ANIMADO --- */
+.route-stream {
+    stroke-dasharray: 10;
+    animation: routeDash 1.2s linear infinite;
+}
+
+.gps-beacon {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: beaconWave 1.8s ease-out infinite;
+}
+
+.reveal-up {
+    animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.delay-1 { animation-delay: 0.15s; }
+.delay-2 { animation-delay: 0.3s; }
+
+/* --- VISTAS INTERNAS Y FOOTER --- */
+.ws-card {
+    background: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+}
+
+.ws-table { color: var(--white); }
+.ws-input {
+    background: rgba(6, 11, 25, 0.8);
+    border: 1px solid var(--glass-border);
+    color: var(--white);
+    border-radius: 10px;
+}
+
+.ws-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--ice-muted);
+}
+
+@keyframes routeDash { to { stroke-dashoffset: -20; } }
+@keyframes beaconWave {
+    0% { transform: scale(1); opacity: 0.9; }
+    100% { transform: scale(3.4); opacity: 0; }
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
