@@ -28,6 +28,26 @@ INSTALLED_APPS = [
     "routes",
     "payments",
 ]
+UNFOLD = {
+    "SITE_TITLE": "WaySmart Admin",
+    "SITE_HEADER": "WaySmart",
+    "SITE_SUBHEADER": "Panel de administración",
+    "COLORS": {
+        "primary": {
+            "50": "239 246 255",
+            "100": "219 234 254",
+            "200": "191 219 254",
+            "300": "147 197 253",
+            "400": "96 165 250",
+            "500": "59 130 246",
+            "600": "37 99 235",
+            "700": "29 78 216",
+            "800": "30 64 175",
+            "900": "30 58 138",
+            "950": "23 37 84",
+        },
+    },
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
