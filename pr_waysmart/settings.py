@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from decouple import Csv, config
+from django.templatetags.static import static
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,6 +29,40 @@ INSTALLED_APPS = [
     "routes",
     "payments",
 ]
+UNFOLD = {
+    "SITE_TITLE": "WaySmart Admin",
+    "SITE_HEADER": "WaySmart",
+    "SITE_SUBHEADER": "Panel de administración",
+    "STYLES": [lambda request: static("pr_waysmart/admin.css")],
+    "COLORS": {
+        "base": {
+            "50": "240 247 250",
+            "100": "220 234 240",
+            "200": "176 204 219",
+            "300": "85 149 173",
+            "400": "7 95 146",
+            "500": "5 79 124",
+            "600": "4 60 107",
+            "700": "3 47 98",
+            "800": "3 40 75",
+            "900": "3 29 50",
+            "950": "2 24 40",
+        },
+        "primary": {
+            "50": "230 246 255",
+            "100": "199 234 250",
+            "200": "140 189 246",
+            "300": "97 154 251",
+            "400": "56 116 250",
+            "500": "49 108 233",
+            "600": "21 87 217",
+            "700": "12 63 162",
+            "800": "5 47 98",
+            "900": "3 37 75",
+            "950": "3 29 50",
+        },
+    },
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
