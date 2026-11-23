@@ -3,10 +3,11 @@ from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.shortcuts import redirect, render
+from django.db import transaction
 from django.utils import timezone
 from django.views.generic import ListView
 
-from .forms import LoginForm
+from .forms import LoginForm, RegistrationForm
 from .models import Perfil
 
 User = get_user_model()
@@ -19,6 +20,36 @@ class PerfilListView(ListView):
     model = Perfil
     template_name = "users/list.html"
     context_object_name = "object_list"
+
+
+def registration_view(request):
+    if request.user.is_authenticated:
+        return redirigir_por_rol(request.user)
+
+    form = RegistrationForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=form.cleaned_data["username"],
+                email=form.cleaned_data["email"],
+                password=form.cleaned_data["password"],
+                first_name=form.cleaned_data["first_name"].strip(),
+                last_name=form.cleaned_data["last_name"].strip(),
+                is_active=False,
+            )
+            Perfil.objects.create(
+                usuario=user,
+                rol=form.cleaned_data["role"],
+                estado=Perfil.Estado.PENDIENTE,
+            )
+
+        messages.success(
+            request,
+            "Tu registro fue enviado. Un administrador debe aprobar la cuenta antes de iniciar sesión.",
+        )
+        return redirect("users:login")
+
+    return render(request, "users/register.html", {"form": form})
 
 
 def login_view(request):
