@@ -197,6 +197,65 @@ nav, main, footer {
     border-radius: 10px;
 }
 
+.ws-input::placeholder {
+    color: rgba(203, 213, 225, 0.58);
+}
+
+.ws-input:focus {
+    background: rgba(6, 11, 25, 0.95);
+    border-color: var(--cyan-bright);
+    color: var(--white);
+    box-shadow: 0 0 0 0.22rem rgba(56, 189, 248, 0.14);
+}
+
+.ws-input option {
+    background: var(--bg-navy);
+    color: var(--white);
+}
+
+.auth-shell {
+    min-height: calc(100vh - 176px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 460px;
+    padding: 2rem;
+}
+
+.auth-card-wide {
+    max-width: 620px;
+}
+
+.auth-card .form-label,
+.auth-card .form-check-label {
+    color: var(--ice-muted);
+    font-size: 0.9rem;
+}
+
+.auth-card .form-check-input {
+    background-color: rgba(6, 11, 25, 0.8);
+    border-color: var(--glass-border);
+}
+
+.auth-card .form-check-input:checked {
+    background-color: var(--cyan-bright);
+    border-color: var(--cyan-bright);
+}
+
+.auth-link {
+    color: var(--cyan-bright);
+    text-decoration: none;
+}
+
+.auth-link:hover {
+    color: var(--white);
+}
+
 .ws-footer {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--ice-muted);

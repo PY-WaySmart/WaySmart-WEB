@@ -14,7 +14,7 @@
 <!-- Navbar limpia de bienvenida -->
 <nav class="navbar navbar-expand-lg navbar-dark ws-navbar sticky-top py-3">
     <div class="container">
-        <a class="navbar-brand fs-4 d-flex align-items-center gap-2" href="/">
+        <a class="navbar-brand fs-4 d-flex align-items-center gap-2" href="{% url 'home' %}">
             <i class="bi bi-geo-alt-fill text-info"></i> WAYSMART
         </a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -26,8 +26,8 @@
                 <li class="nav-item"><a class="nav-link" href="#beneficios">Beneficios</a></li>
             </ul>
             <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
-                <a href="/login/" class="nav-link">Iniciar sesión</a>
-                <a href="/registro/" class="btn btn-ws-pill-solid btn-sm">Registrarse</a>
+                <a href="{% url 'users:login' %}" class="nav-link">Iniciar sesión</a>
+                <a href="{% url 'users:register' %}" class="btn btn-ws-pill-solid btn-sm">Registrarse</a>
             </div>
         </div>
     </div>
