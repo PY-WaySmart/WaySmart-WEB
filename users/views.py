@@ -37,11 +37,10 @@ def registration_view(request):
                 last_name=form.cleaned_data["last_name"].strip(),
                 is_active=False,
             )
-            Perfil.objects.create(
-                usuario=user,
-                rol=form.cleaned_data["role"],
-                estado=Perfil.Estado.PENDIENTE,
-            )
+            perfil = user.perfil
+            perfil.rol = form.cleaned_data["role"]
+            perfil.estado = Perfil.Estado.PENDIENTE
+            perfil.save(update_fields=["rol", "estado", "fecha_actualizacion"])
 
         messages.success(
             request,
@@ -151,9 +150,9 @@ def redirigir_por_rol(user):
     if user.is_superuser or (perfil and perfil.rol == Perfil.Rol.ADMINISTRADOR):
         return redirect("dashboard")
     if perfil and perfil.rol == Perfil.Rol.EMPRESA:
-        return redirect("/empresas/")
+        return redirect("dashboard")
     if perfil and perfil.rol == Perfil.Rol.REPARTIDOR:
-        return redirect("/repartidores/")
+        return redirect("dashboard")
 
     return redirect("home")
 

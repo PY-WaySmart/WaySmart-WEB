@@ -34,3 +34,26 @@ class DashboardAccessTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "dashboard.html")
         self.assertContains(response, "Centro de operaciones")
+
+
+class RegistrationTests(TestCase):
+    def test_registration_updates_signal_created_profile(self):
+        response = self.client.post(
+            reverse("users:register"),
+            {
+                "first_name": "Ana",
+                "last_name": "García",
+                "username": "ana-garcia",
+                "email": "ana@example.com",
+                "role": Perfil.Rol.EMPRESA,
+                "password": "Qx7!vV3z#9pLm2",
+                "password_confirmation": "Qx7!vV3z#9pLm2",
+                "terms": "on",
+            },
+        )
+
+        self.assertRedirects(response, reverse("users:login"))
+        user = get_user_model().objects.get(username="ana-garcia")
+        self.assertEqual(Perfil.objects.filter(usuario=user).count(), 1)
+        self.assertEqual(user.perfil.rol, Perfil.Rol.EMPRESA)
+        self.assertEqual(user.perfil.estado, Perfil.Estado.PENDIENTE)
