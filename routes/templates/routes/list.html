@@ -1,16 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Rutas | WaySmart{% endblock %}
 {% block content %}
-<div class="container py-5">
+<div class="container py-4 py-lg-5">
     <div class="ws-card p-4">
-        <h1 class="ws-hero-title h2 mb-4">Rutas</h1>
-        <table class="table ws-table align-middle">
-            {% for ruta in object_list %}
-            <tr><td>{{ ruta }} — {{ ruta.tipo_ruta }}</td></tr>
-            {% empty %}
-            <tr><td>No hay rutas registradas.</td></tr>
-            {% endfor %}
-        </table>
+        <div class="ws-section-heading"><div><span class="font-mono-ws text-info">OPTIMIZACIÓN</span><h1 class="ws-hero-title h2 mb-0">Rutas</h1></div><span class="ws-role-badge"><i class="bi bi-broadcast me-1"></i>Seguimiento</span></div>
+        <div class="table-responsive"><table class="table ws-table align-middle"><thead><tr><th>Ruta</th><th>Servicio</th><th>Tipo</th><th>Tiempo estimado</th><th>Selección</th></tr></thead><tbody>{% for ruta in object_list %}<tr><td><strong>#{{ ruta.pk }}</strong></td><td>{{ ruta.asignacion.servicio.codigo_servicio }}</td><td>{{ ruta.tipo_ruta }}</td><td>{{ ruta.tiempo_estimado_min }} min</td><td>{% if ruta.seleccionada %}<span class="ws-status status-activo">Seleccionada</span>{% else %}<span class="text-secondary small">Alternativa</span>{% endif %}</td></tr>{% empty %}<tr><td colspan="5"><div class="ws-empty-state"><i class="bi bi-signpost-split"></i><p>No hay rutas registradas.</p></div></td></tr>{% endfor %}</tbody></table></div>
     </div>
 </div>
 {% endblock %}

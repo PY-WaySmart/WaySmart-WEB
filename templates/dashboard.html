@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Panel | WaySmart{% endblock %}
+
+{% block content %}
+<section class="container py-4 py-lg-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+        <div>
+            <span class="font-mono-ws text-info text-uppercase">Centro de operaciones</span>
+            <h1 class="ws-hero-title h2 mb-2">Hola, {{ user.first_name|default:user.username }}</h1>
+            <p class="text-secondary mb-0">Consulta el estado de tu operación desde un solo lugar.</p>
+        </div>
+        <span class="ws-role-badge"><i class="bi bi-shield-check me-1"></i>{{ perfil.get_rol_display|default:"Administrador" }}</span>
+    </div>
+
+    {% if rol == "empresa" %}
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-building"></i></span><strong>{{ mis_empresas|length }}</strong><span>Empresas vinculadas</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-box-seam"></i></span><strong>{{ mis_servicios|length }}</strong><span>Servicios recientes</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-truck"></i></span><strong>{{ repartidores_count }}</strong><span>Repartidores activos</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-pin-map"></i></span><strong>{{ asignaciones_count }}</strong><span>Asignaciones</span></div></div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="ws-card p-4 h-100">
+                    <div class="ws-section-heading"><div><span class="font-mono-ws text-info">ACTIVIDAD</span><h2 class="h5 mb-0">Servicios recientes</h2></div><a href="{% url 'services:list' %}" class="auth-link small">Ver todos</a></div>
+                    {% include "partials/service_rows.html" with services=mis_servicios %}
+                </div>
+            </div>
+            <div class="col-lg-4"><div class="ws-card p-4 h-100 ws-gradient-card"><i class="bi bi-lightning-charge-fill text-info fs-2"></i><h2 class="h5 mt-3">Optimiza cada entrega</h2><p class="text-secondary small">Crea servicios, consulta rutas y monitorea el estado de tus entregas.</p><a href="{% url 'services:list' %}" class="btn btn-ws-pill-solid btn-sm">Explorar servicios</a></div></div>
+        </div>
+    {% elif rol == "repartidor" %}
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-clipboard-check"></i></span><strong>{{ mis_asignaciones|length }}</strong><span>Asignaciones recientes</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-wallet2"></i></span><strong>{{ mis_pagos|length }}</strong><span>Pagos registrados</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-geo-alt"></i></span><strong>{{ servicios_count }}</strong><span>Servicios disponibles</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-shield-check"></i></span><strong>{{ mis_repartidores|length }}</strong><span>Perfil operativo</span></div></div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-8"><div class="ws-card p-4 h-100"><div class="ws-section-heading"><div><span class="font-mono-ws text-info">OPERACIÓN</span><h2 class="h5 mb-0">Asignaciones recientes</h2></div><a href="{% url 'routes:list' %}" class="auth-link small">Ver rutas</a></div>{% include "partials/assignment_rows.html" with assignments=mis_asignaciones %}</div></div>
+            <div class="col-lg-4"><div class="ws-card p-4 h-100"><span class="font-mono-ws text-info">ESTADO</span><h2 class="h5 mt-2">Listo para entregar</h2><p class="text-secondary small">Mantén tus datos y documentos actualizados para recibir nuevas asignaciones.</p><a href="{% url 'drivers:list' %}" class="btn btn-ws-pill-outline btn-sm">Ver perfil</a></div></div>
+        </div>
+    {% else %}
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-people"></i></span><strong>{{ empresas_count|add:repartidores_count }}</strong><span>Usuarios operativos</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-building"></i></span><strong>{{ empresas_count }}</strong><span>Empresas</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-box-seam"></i></span><strong>{{ servicios_count }}</strong><span>Servicios</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-cash-coin"></i></span><strong>{{ pagos_count }}</strong><span>Pagos</span></div></div>
+        </div>
+        <div class="ws-card p-4">
+            <div class="ws-section-heading"><div><span class="font-mono-ws text-info">ADMINISTRACIÓN</span><h2 class="h5 mb-0">Accesos rápidos</h2></div><a href="/admin/" class="btn btn-ws-pill-solid btn-sm">Abrir administración</a></div>
+            <div class="row g-3">
+                <div class="col-md-4"><a class="ws-quick-link" href="{% url 'users:list' %}"><i class="bi bi-person-lines-fill"></i><span>Gestionar usuarios</span><i class="bi bi-arrow-up-right"></i></a></div>
+                <div class="col-md-4"><a class="ws-quick-link" href="{% url 'companies:list' %}"><i class="bi bi-buildings"></i><span>Revisar empresas</span><i class="bi bi-arrow-up-right"></i></a></div>
+                <div class="col-md-4"><a class="ws-quick-link" href="{% url 'drivers:list' %}"><i class="bi bi-bicycle"></i><span>Revisar repartidores</span><i class="bi bi-arrow-up-right"></i></a></div>
+            </div>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

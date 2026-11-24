@@ -1,16 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Repartidores | WaySmart{% endblock %}
 {% block content %}
-<div class="container py-5">
+<div class="container py-4 py-lg-5">
     <div class="ws-card p-4">
-        <h1 class="ws-hero-title h2 mb-4">Repartidores</h1>
-        <table class="table ws-table align-middle">
-            {% for repartidor in object_list %}
-            <tr><td>{{ repartidor }} — {{ repartidor.get_estado_display }}</td></tr>
-            {% empty %}
-            <tr><td>No hay repartidores registrados.</td></tr>
-            {% endfor %}
-        </table>
+        <div class="ws-section-heading"><div><span class="font-mono-ws text-info">RED OPERATIVA</span><h1 class="ws-hero-title h2 mb-0">Repartidores</h1></div><a href="/admin/drivers/repartidor/add/" class="btn btn-ws-pill-solid btn-sm"><i class="bi bi-plus-lg me-1"></i>Nuevo repartidor</a></div>
+        <div class="table-responsive"><table class="table ws-table align-middle"><thead><tr><th>Repartidor</th><th>Identificación</th><th>Teléfono</th><th>Estado</th></tr></thead><tbody>{% for repartidor in object_list %}<tr><td><strong>{{ repartidor }}</strong></td><td>{{ repartidor.nro_identificacion|default:"—" }}</td><td>{{ repartidor.telefono|default:"—" }}</td><td><span class="ws-status status-{{ repartidor.estado|lower }}">{{ repartidor.estado|default:"Pendiente" }}</span></td></tr>{% empty %}<tr><td colspan="4"><div class="ws-empty-state"><i class="bi bi-bicycle"></i><p>No hay repartidores registrados.</p></div></td></tr>{% endfor %}</tbody></table></div>
     </div>
 </div>
 {% endblock %}

@@ -1,16 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Servicios | WaySmart{% endblock %}
 {% block content %}
-<div class="container py-5">
+<div class="container py-4 py-lg-5">
     <div class="ws-card p-4">
-        <h1 class="ws-hero-title h2 mb-4">Servicios</h1>
-        <table class="table ws-table align-middle">
-            {% for servicio in object_list %}
-            <tr><td>{{ servicio.codigo_servicio }} — {{ servicio.get_estado_display }}</td></tr>
-            {% empty %}
-            <tr><td>No hay servicios registrados.</td></tr>
-            {% endfor %}
-        </table>
+        <div class="ws-section-heading"><div><span class="font-mono-ws text-info">LOGÍSTICA</span><h1 class="ws-hero-title h2 mb-0">Servicios</h1></div><a href="/admin/services/servicio/add/" class="btn btn-ws-pill-solid btn-sm"><i class="bi bi-plus-lg me-1"></i>Nuevo servicio</a></div>
+        <div class="table-responsive"><table class="table ws-table align-middle"><thead><tr><th>Código</th><th>Empresa</th><th>Recogida</th><th>Fecha deseada</th><th>Estado</th></tr></thead><tbody>{% for servicio in object_list %}<tr><td><strong>{{ servicio.codigo_servicio }}</strong><small class="d-block text-secondary">{{ servicio.tipo_envio|default:"Envío estándar" }}</small></td><td>{{ servicio.empresa.nombre }}</td><td>{{ servicio.direccion_recogidas|truncatechars:34 }}</td><td>{{ servicio.fecha_deseada|date:"d/m/Y H:i"|default:"—" }}</td><td><span class="ws-status status-{{ servicio.estado|slugify }}">{{ servicio.get_estado_display }}</span></td></tr>{% empty %}<tr><td colspan="5"><div class="ws-empty-state"><i class="bi bi-box-seam"></i><p>No hay servicios registrados.</p></div></td></tr>{% endfor %}</tbody></table></div>
     </div>
 </div>
 {% endblock %}

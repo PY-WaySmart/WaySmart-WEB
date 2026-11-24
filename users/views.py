@@ -149,7 +149,7 @@ def redirigir_por_rol(user):
     perfil = getattr(user, "perfil", None)
 
     if user.is_superuser or (perfil and perfil.rol == Perfil.Rol.ADMINISTRADOR):
-        return redirect("/admin/")
+        return redirect("dashboard")
     if perfil and perfil.rol == Perfil.Rol.EMPRESA:
         return redirect("/empresas/")
     if perfil and perfil.rol == Perfil.Rol.REPARTIDOR:

@@ -1,16 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Pagos | WaySmart{% endblock %}
 {% block content %}
-<div class="container py-5">
+<div class="container py-4 py-lg-5">
     <div class="ws-card p-4">
-        <h1 class="ws-hero-title h2 mb-4">Pagos a repartidores</h1>
-        <table class="table ws-table align-middle">
-            {% for pago in object_list %}
-            <tr><td>{{ pago.repartidor }} — {{ pago.monto_neto }} ({{ pago.get_estado_display }})</td></tr>
-            {% empty %}
-            <tr><td>No hay pagos registrados.</td></tr>
-            {% endfor %}
-        </table>
+        <div class="ws-section-heading"><div><span class="font-mono-ws text-info">FINANZAS</span><h1 class="ws-hero-title h2 mb-0">Pagos a repartidores</h1></div><a href="/admin/payments/pagorepartidor/add/" class="btn btn-ws-pill-solid btn-sm"><i class="bi bi-plus-lg me-1"></i>Registrar pago</a></div>
+        <div class="table-responsive"><table class="table ws-table align-middle"><thead><tr><th>Repartidor</th><th>Total generado</th><th>Comisión</th><th>Neto</th><th>Fecha</th><th>Estado</th></tr></thead><tbody>{% for pago in object_list %}<tr><td><strong>{{ pago.repartidor }}</strong></td><td>${{ pago.monto_total_generado }}</td><td>${{ pago.comision_plataforma }}</td><td class="text-info fw-bold">${{ pago.monto_neto }}</td><td>{{ pago.fecha_pago|date:"d/m/Y" }}</td><td><span class="ws-status status-{{ pago.estado }}">{{ pago.get_estado_display }}</span></td></tr>{% empty %}<tr><td colspan="6"><div class="ws-empty-state"><i class="bi bi-wallet2"></i><p>No hay pagos registrados.</p></div></td></tr>{% endfor %}</tbody></table></div>
     </div>
 </div>
 {% endblock %}
