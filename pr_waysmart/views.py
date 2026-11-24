@@ -25,19 +25,33 @@ def dashboard(request):
 
     if rol == Perfil.Rol.EMPRESA:
         context["mis_empresas"] = Empresa.objects.filter(usuario=request.user)
-        context["mis_servicios"] = Servicio.objects.filter(
+        mis_servicios = Servicio.objects.filter(
             empresa__usuario=request.user
-        ).select_related("empresa")[:5]
+        ).select_related("empresa")
+        context["servicios_count"] = mis_servicios.count()
+        context["mis_servicios"] = mis_servicios[:5]
+        context["repartidores_count"] = Repartidor.objects.count()
+        context["asignaciones_count"] = Asignacion.objects.filter(
+            servicio__empresa__usuario=request.user
+        ).count()
     elif rol == Perfil.Rol.REPARTIDOR:
         context["mis_repartidores"] = Repartidor.objects.filter(
             usuario=request.user
         )
-        context["mis_asignaciones"] = Asignacion.objects.filter(
+        mis_asignaciones = Asignacion.objects.filter(
             repartidor__usuario=request.user
-        ).select_related("servicio")[:5]
+        ).select_related("servicio")
+        context["mis_asignaciones"] = mis_asignaciones[:5]
         context["mis_pagos"] = PagoRepartidor.objects.filter(
             repartidor__usuario=request.user
         )[:5]
+        context["asignaciones_count"] = mis_asignaciones.count()
+        context["pagos_count"] = PagoRepartidor.objects.filter(
+            repartidor__usuario=request.user
+        ).count()
+        context["repartidores_count"] = Repartidor.objects.filter(
+            usuario=request.user
+        ).count()
 
     return render(request, "dashboard.html", context)
 

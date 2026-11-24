@@ -16,25 +16,25 @@
     {% if rol == "empresa" %}
         <div class="row g-3 mb-4">
             <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-building"></i></span><strong>{{ mis_empresas|length }}</strong><span>Empresas vinculadas</span></div></div>
-            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-box-seam"></i></span><strong>{{ mis_servicios|length }}</strong><span>Servicios recientes</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-box-seam"></i></span><strong>{{ servicios_count }}</strong><span>Servicios registrados</span></div></div>
             <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-truck"></i></span><strong>{{ repartidores_count }}</strong><span>Repartidores activos</span></div></div>
             <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-pin-map"></i></span><strong>{{ asignaciones_count }}</strong><span>Asignaciones</span></div></div>
         </div>
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="ws-card p-4 h-100">
-                    <div class="ws-section-heading"><div><span class="font-mono-ws text-info">ACTIVIDAD</span><h2 class="h5 mb-0">Servicios recientes</h2></div><a href="{% url 'services:list' %}" class="auth-link small">Ver todos</a></div>
+                    <div class="ws-section-heading"><div><span class="font-mono-ws text-info">ACTIVIDAD</span><h2 class="h5 mb-0">Servicios recientes</h2></div><div class="d-flex gap-3"><a href="{% url 'services:list' %}" class="auth-link small">Ver todos</a><a href="{% url 'services:create' %}" class="auth-link small">Solicitar</a></div></div>
                     {% include "partials/service_rows.html" with services=mis_servicios %}
                 </div>
             </div>
-            <div class="col-lg-4"><div class="ws-card p-4 h-100 ws-gradient-card"><i class="bi bi-lightning-charge-fill text-info fs-2"></i><h2 class="h5 mt-3">Optimiza cada entrega</h2><p class="text-secondary small">Crea servicios, consulta rutas y monitorea el estado de tus entregas.</p><a href="{% url 'services:list' %}" class="btn btn-ws-pill-solid btn-sm">Explorar servicios</a></div></div>
+            <div class="col-lg-4"><div class="ws-card p-4 h-100 ws-gradient-card"><i class="bi bi-lightning-charge-fill text-info fs-2"></i><h2 class="h5 mt-3">Optimiza cada entrega</h2><p class="text-secondary small">Crea servicios, consulta rutas y monitorea el estado de tus entregas.</p><a href="{% url 'services:create' %}" class="btn btn-ws-pill-solid btn-sm">Solicitar servicio</a></div></div>
         </div>
     {% elif rol == "repartidor" %}
         <div class="row g-3 mb-4">
-            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-clipboard-check"></i></span><strong>{{ mis_asignaciones|length }}</strong><span>Asignaciones recientes</span></div></div>
-            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-wallet2"></i></span><strong>{{ mis_pagos|length }}</strong><span>Pagos registrados</span></div></div>
-            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-geo-alt"></i></span><strong>{{ servicios_count }}</strong><span>Servicios disponibles</span></div></div>
-            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-shield-check"></i></span><strong>{{ mis_repartidores|length }}</strong><span>Perfil operativo</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-clipboard-check"></i></span><strong>{{ asignaciones_count }}</strong><span>Asignaciones</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-wallet2"></i></span><strong>{{ pagos_count }}</strong><span>Pagos registrados</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-geo-alt"></i></span><strong>{{ mis_repartidores|length }}</strong><span>Perfil operativo</span></div></div>
+            <div class="col-sm-6 col-xl-3"><div class="ws-stat-card"><span class="ws-stat-icon"><i class="bi bi-truck"></i></span><strong>{{ mis_asignaciones|length }}</strong><span>Asignaciones recientes</span></div></div>
         </div>
         <div class="row g-4">
             <div class="col-lg-8"><div class="ws-card p-4 h-100"><div class="ws-section-heading"><div><span class="font-mono-ws text-info">OPERACIÓN</span><h2 class="h5 mb-0">Asignaciones recientes</h2></div><a href="{% url 'routes:list' %}" class="auth-link small">Ver rutas</a></div>{% include "partials/assignment_rows.html" with assignments=mis_asignaciones %}</div></div>

@@ -11,12 +11,6 @@
             <p class="text-secondary mb-0">Inicia sesión para continuar</p>
         </div>
 
-        {% for message in messages %}
-            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} py-2" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
-
         <form method="post" action="{% url 'users:login' %}">
             {% csrf_token %}
 

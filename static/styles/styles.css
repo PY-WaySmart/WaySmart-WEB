@@ -394,6 +394,18 @@ nav, main, footer {
 .ws-quick-link i:last-child { margin-left: auto; color: var(--ice-muted); }
 .ws-quick-link:hover { border-color: var(--cyan-bright); color: var(--white); transform: translateY(-2px); }
 
+.ws-form-section {
+    padding: 1.25rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    background: rgba(6, 11, 25, 0.32);
+}
+.ws-form-section h2 { font-family: var(--font-display); }
+.ws-divider { border-color: rgba(255, 255, 255, 0.16); opacity: 1; }
+.auth-card-wide { max-width: 760px; }
+.ws-card .form-label { color: var(--ice-muted); }
+.ws-card .errorlist { margin: 0.3rem 0 0; padding-left: 1.1rem; color: #fda4af; font-size: 0.82rem; }
+
 @media (max-width: 575px) {
     .ws-section-heading { align-items: flex-start; }
     .ws-list-row { align-items: flex-start; }

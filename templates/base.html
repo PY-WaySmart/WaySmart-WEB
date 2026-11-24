@@ -23,8 +23,17 @@
             <ul class="navbar-nav mx-auto gap-lg-3">
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2-fill me-1"></i>Panel</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'services:list' %}">Servicios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'routes:list' %}">Rutas</a></li>
+                    {% if user.is_staff or user.perfil.rol == "empresa" %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'services:list' %}">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'companies:list' %}">Empresas</a></li>
+                    {% endif %}
+                    {% if user.is_staff or user.perfil.rol == "repartidor" %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'routes:list' %}">Asignaciones</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'payments:list' %}">Pagos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'drivers:list' %}">{% if user.is_staff %}Repartidores{% else %}Mi perfil{% endif %}</a></li>
+                    {% elif user.perfil.rol == "empresa" %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'routes:list' %}">Seguimiento</a></li>
+                    {% endif %}
                     {% if user.is_staff %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'users:list' %}">Usuarios</a></li>
                     {% endif %}
@@ -51,6 +60,16 @@
 
 <!-- Contenido -->
 <main class="flex-grow-1">
+    {% if messages %}
+    <div class="container pt-3" aria-live="polite">
+        {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show" role="status">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     {% block content %}{% endblock %}
 </main>
 
