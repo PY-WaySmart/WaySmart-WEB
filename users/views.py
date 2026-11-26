@@ -6,9 +6,12 @@ from django.shortcuts import redirect, render
 from django.db import transaction
 from django.utils import timezone
 from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import LoginForm, RegistrationForm
 from .models import Perfil
+from companies.models import Empresa
+from drivers.models import Repartidor
 
 User = get_user_model()
 
@@ -16,10 +19,13 @@ MAX_INTENTOS_FALLIDOS = 5
 BLOQUEO_MINUTOS = 15
 
 
-class PerfilListView(ListView):
+class PerfilListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Perfil
     template_name = "users/list.html"
     context_object_name = "object_list"
+
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
 
 
 def registration_view(request):
@@ -37,11 +43,31 @@ def registration_view(request):
                 last_name=form.cleaned_data["last_name"].strip(),
                 is_active=False,
             )
-            Perfil.objects.create(
-                usuario=user,
-                rol=form.cleaned_data["role"],
-                estado=Perfil.Estado.PENDIENTE,
-            )
+            perfil = user.perfil
+            perfil.rol = form.cleaned_data["role"]
+            perfil.estado = Perfil.Estado.PENDIENTE
+            perfil.save(update_fields=["rol", "estado", "fecha_actualizacion"])
+            if perfil.rol == Perfil.Rol.EMPRESA:
+                Empresa.objects.create(
+                    usuario=user,
+                    nombre=form.cleaned_data["business_name"],
+                    nit=form.cleaned_data["nit"],
+                    direccion=form.cleaned_data["business_address"],
+                    telefono_contacto=form.cleaned_data["business_phone"],
+                    representante_legal_nombre=form.cleaned_data["legal_name"],
+                    representante_legal_telefono=form.cleaned_data["legal_phone"],
+                    representante_legal_correo=form.cleaned_data["legal_email"],
+                    tipo_colaboracion=form.cleaned_data["tipo_colaboracion"],
+                )
+            else:
+                Repartidor.objects.create(
+                    usuario=user,
+                    nombres=user.first_name,
+                    apellidos=user.last_name,
+                    nro_identificacion=form.cleaned_data["identification"],
+                    telefono=form.cleaned_data["phone"],
+                    estado="Pendiente",
+                )
 
         messages.success(
             request,
@@ -149,11 +175,11 @@ def redirigir_por_rol(user):
     perfil = getattr(user, "perfil", None)
 
     if user.is_superuser or (perfil and perfil.rol == Perfil.Rol.ADMINISTRADOR):
-        return redirect("/admin/")
+        return redirect("dashboard")
     if perfil and perfil.rol == Perfil.Rol.EMPRESA:
-        return redirect("/empresas/")
+        return redirect("dashboard")
     if perfil and perfil.rol == Perfil.Rol.REPARTIDOR:
-        return redirect("/repartidores/")
+        return redirect("dashboard")
 
     return redirect("home")
 

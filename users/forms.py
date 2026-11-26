@@ -4,6 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.core.exceptions import ValidationError
 
+from companies.models import Empresa
 from .models import Perfil
 
 User = get_user_model()
@@ -99,6 +100,65 @@ class RegistrationForm(forms.Form):
     terms = forms.BooleanField(
         label="Acepto los términos y condiciones",
     )
+    business_name = forms.CharField(
+        label="Razón social",
+        max_length=200,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "ws-input form-control"}),
+    )
+    nit = forms.CharField(
+        label="NIT",
+        max_length=50,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "ws-input form-control"}),
+    )
+    business_address = forms.CharField(
+        label="Dirección de la empresa",
+        max_length=300,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "ws-input form-control"}),
+    )
+    business_phone = forms.CharField(
+        label="Teléfono de contacto",
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "ws-input form-control"}),
+    )
+    legal_name = forms.CharField(
+        label="Nombre del representante legal",
+        max_length=200,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "ws-input form-control"}),
+    )
+    legal_phone = forms.CharField(
+        label="Teléfono del representante",
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "ws-input form-control"}),
+    )
+    legal_email = forms.EmailField(
+        label="Correo del representante",
+        required=False,
+        widget=forms.EmailInput(attrs={"class": "ws-input form-control"}),
+    )
+    tipo_colaboracion = forms.ChoiceField(
+        label="Tipo de colaboración",
+        required=False,
+        choices=Empresa.TipoColaboracion.choices,
+        widget=forms.Select(attrs={"class": "ws-input form-select"}),
+    )
+    identification = forms.CharField(
+        label="Número de identificación",
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "ws-input form-control"}),
+    )
+    phone = forms.CharField(
+        label="Teléfono",
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "ws-input form-control"}),
+    )
 
     def clean_username(self):
         username = self.cleaned_data["username"].strip()
@@ -112,8 +172,36 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("Ya existe una cuenta con este correo.")
         return email
 
+    def clean_nit(self):
+        nit = self.cleaned_data["nit"].strip()
+        if nit and Empresa.objects.filter(nit__iexact=nit).exists():
+            raise forms.ValidationError("Ya existe una empresa registrada con este NIT.")
+        return nit
+
     def clean(self):
         cleaned_data = super().clean()
+        role = cleaned_data.get("role")
+        role_fields = (
+            {
+                "business_name": "La razón social es obligatoria.",
+                "nit": "El NIT es obligatorio.",
+                "business_address": "La dirección de la empresa es obligatoria.",
+                "business_phone": "El teléfono de contacto es obligatorio.",
+                "legal_name": "El nombre del representante es obligatorio.",
+                "legal_phone": "El teléfono del representante es obligatorio.",
+                "legal_email": "El correo del representante es obligatorio.",
+                "tipo_colaboracion": "Selecciona un tipo de colaboración.",
+            }
+            if role == Perfil.Rol.EMPRESA
+            else {
+                "identification": "El número de identificación es obligatorio.",
+                "phone": "El teléfono es obligatorio.",
+            }
+        )
+        for field, error in role_fields.items():
+            if not cleaned_data.get(field):
+                self.add_error(field, error)
+
         password = cleaned_data.get("password")
         confirmation = cleaned_data.get("password_confirmation")
         if password and confirmation and password != confirmation:

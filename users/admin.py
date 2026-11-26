@@ -5,6 +5,7 @@ from django.db import transaction
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.utils import timezone
 from unfold.admin import ModelAdmin, StackedInline
 from unfold.decorators import action
 from unfold.forms import (
@@ -14,6 +15,8 @@ from unfold.forms import (
 )
 
 from .models import Perfil
+from companies.models import Empresa
+from drivers.models import Repartidor
 
 User = get_user_model()
 
@@ -21,6 +24,22 @@ User = get_user_model()
 def _sync_user_access(perfil):
     user = perfil.usuario
     should_be_active = perfil.estado == Perfil.Estado.ACTIVO
+
+    if should_be_active:
+        Empresa.objects.filter(
+            usuario=user,
+            estado=Empresa.Estado.PENDIENTE,
+        ).update(
+            estado=Empresa.Estado.APROBADO,
+            fecha_validacion=timezone.now(),
+        )
+        Repartidor.objects.filter(
+            usuario=user,
+            estado__iexact="Pendiente",
+        ).update(
+            estado="Activo",
+            fecha_validacion=timezone.now(),
+        )
 
     if should_be_active and (perfil.intentos_fallidos or perfil.bloqueado_hasta):
         perfil.intentos_fallidos = 0
