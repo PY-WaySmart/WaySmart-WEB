@@ -78,25 +78,34 @@ def registro_repartidor_view(request):
                     entidad_tipo=Documento.EntidadTipo.REPARTIDOR,
                 )
 
-            enviar_correo_registro(
-                email=data["email"],
-                nombres=data["nombres"],
-                apellidos=data["apellidos"],
-            )
-
-            messages.success(
-                request,
-                "Registro exitoso. Tu cuenta quedó pendiente de aprobación. "
-                "Revisa tu correo para la confirmación.",
-            )
-            return redirect("drivers:registro")
-
         except Exception:
             logger.exception("Error al registrar repartidor")
             messages.error(
                 request,
                 "No se pudo completar el registro. Intenta de nuevo.",
             )
+            return render(request, "drivers/registro.html", {"form": form})
+
+        try:
+            enviar_correo_registro(
+                email=data["email"],
+                nombres=data["nombres"],
+                apellidos=data["apellidos"],
+            )
+            messages.success(
+                request,
+                "Registro exitoso. Tu cuenta quedó pendiente de aprobación. "
+                "Revisa tu correo para la confirmación.",
+            )
+        except Exception:
+            logger.exception("Registro guardado, pero falló el envío de correo SMTP")
+            messages.warning(
+                request,
+                "Registro exitoso. Tu cuenta quedó pendiente de aprobación, "
+                "pero no se pudo enviar el correo de confirmación.",
+            )
+
+        return redirect("drivers:registro")
 
     return render(request, "drivers/registro.html", {"form": form})
 
@@ -104,7 +113,7 @@ def registro_repartidor_view(request):
 def enviar_correo_registro(email, nombres, apellidos):
     """
     Envía correo de confirmación indicando que la cuenta quedó en estado PENDIENTE.
-    En desarrollo (console backend) el mensaje aparece en la terminal del servidor.
+    Si no hay EMAIL_HOST_PASSWORD en el .env local, se imprime en la terminal.
     """
     asunto = "WaySmart – Confirmación de registro de repartidor"
     mensaje = (
