@@ -1,19 +1,24 @@
+import logging
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
-from django.shortcuts import redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.mail import send_mail
 from django.db import transaction
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.generic import ListView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from .forms import LoginForm, RegistrationForm
-from .models import Perfil
 from companies.models import Empresa
 from drivers.models import Repartidor
 
+from .forms import LoginForm, RegistrationForm
+from .models import Perfil
+
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 MAX_INTENTOS_FALLIDOS = 5
 BLOQUEO_MINUTOS = 15
@@ -43,7 +48,7 @@ def registration_view(request):
                 last_name=form.cleaned_data["last_name"].strip(),
                 is_active=False,
             )
-            perfil = user.perfil
+            perfil, _ = Perfil.objects.get_or_create(usuario=user)
             perfil.rol = form.cleaned_data["role"]
             perfil.estado = Perfil.Estado.PENDIENTE
             perfil.save(update_fields=["rol", "estado", "fecha_actualizacion"])
@@ -66,16 +71,52 @@ def registration_view(request):
                     apellidos=user.last_name,
                     nro_identificacion=form.cleaned_data["identification"],
                     telefono=form.cleaned_data["phone"],
-                    estado="Pendiente",
+                    estado=Repartidor.Estado.PENDIENTE,
                 )
 
-        messages.success(
-            request,
-            "Tu registro fue enviado. Un administrador debe aprobar la cuenta antes de iniciar sesión.",
-        )
+        try:
+            enviar_correo_estado_registro(
+                email=user.email,
+                nombres=user.first_name,
+                apellidos=user.last_name,
+                rol_display=perfil.get_rol_display(),
+            )
+            messages.success(
+                request,
+                "Tu registro fue enviado. Tu cuenta quedó en estado PENDIENTE de aprobación; "
+                "revisa tu correo para ver la confirmación.",
+            )
+        except Exception:
+            logger.exception("Registro guardado en users, pero falló el envío de correo SMTP")
+            messages.warning(
+                request,
+                "Tu registro fue enviado y quedó en estado PENDIENTE de aprobación, "
+                "pero no se pudo enviar el correo de confirmación.",
+            )
+
         return redirect("users:login")
 
     return render(request, "users/register.html", {"form": form})
+
+
+def enviar_correo_estado_registro(email, nombres, apellidos, rol_display):
+    asunto = "WaySmart – Confirmación de registro y estado de cuenta"
+    mensaje = (
+        f"Hola {nombres} {apellidos},\n\n"
+        f"Tu solicitud de registro como {rol_display} en WaySmart se recibió correctamente.\n\n"
+        "Estado de tu cuenta: PENDIENTE\n\n"
+        "Un administrador revisará tus datos. Cuando tu cuenta sea aprobada "
+        "podrás iniciar sesión y operar en la plataforma.\n\n"
+        "Si no solicitaste este registro, ignora este mensaje.\n\n"
+        "— Equipo WaySmart"
+    )
+    send_mail(
+        subject=asunto,
+        message=mensaje,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[email],
+        fail_silently=False,
+    )
 
 
 def login_view(request):
