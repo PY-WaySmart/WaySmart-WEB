@@ -29,6 +29,25 @@ python manage.py runserver
 
 (OPCIONAL DE MOMENTO) => Completa `SECRET_KEY` en `.env` con una clave local antes de iniciar el servidor.
 
+## Flujos disponibles
+
+- El registro crea una cuenta pendiente y un perfil de empresa o repartidor con sus datos básicos.
+- Un administrador aprueba la cuenta desde `/admin/`; al activarla, la empresa o el perfil de repartidor también queda habilitado.
+- Las empresas aprobadas solicitan servicios desde **Servicios** e ingresan uno o más destinos de entrega.
+- El administrador asigna servicios a repartidores desde **Asignaciones**.
+- Los repartidores consultan sus asignaciones, las aceptan y las marcan como completadas; también pueden consultar sus pagos.
+- Las listas de empresas, repartidores, servicios, asignaciones y pagos se limitan según el rol autenticado.
+
+Para validar cambios localmente:
+
+```bash
+python manage.py check
+python manage.py makemigrations --check --dry-run
+python manage.py test
+```
+
+La optimización automática de rutas, el seguimiento GPS, los pagos electrónicos y la API para la aplicación móvil todavía requieren integración adicional.
+
 ## Ramas
 
 Nadie trabaja directo sobre `main`.

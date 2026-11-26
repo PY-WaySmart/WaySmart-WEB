@@ -1,0 +1,9 @@
+{% for servicio in services %}
+<div class="ws-list-row">
+    <span class="ws-list-icon"><i class="bi bi-box-seam"></i></span>
+    <div class="flex-grow-1"><strong>{{ servicio.codigo_servicio }}</strong><small>{{ servicio.empresa.nombre }} · {{ servicio.direccion_recogidas }}</small></div>
+    <span class="ws-status status-{{ servicio.estado|slugify }}">{{ servicio.get_estado_display }}</span>
+</div>
+{% empty %}
+<div class="ws-empty-state"><i class="bi bi-inbox"></i><p>No hay servicios registrados todavía.</p></div>
+{% endfor %}

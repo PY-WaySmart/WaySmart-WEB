@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Solicitar servicio | WaySmart{% endblock %}
+{% block content %}
+<section class="container py-4 py-lg-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="mb-4">
+                <a class="auth-link small" href="{% url 'services:list' %}"><i class="bi bi-arrow-left me-1"></i>Volver a servicios</a>
+                <span class="font-mono-ws text-info d-block mt-3">NUEVA OPERACIÓN</span>
+                <h1 class="ws-hero-title h2">Solicitar un servicio</h1>
+                <p class="text-secondary">Ingresa los datos de recogida y agrega uno o más destinos.</p>
+            </div>
+            <form method="post" class="ws-card p-4 p-md-5">
+                {% csrf_token %}
+                {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+                <h2 class="h5 mb-3">Datos del envío</h2>
+                <div class="row g-3">
+                    {% for field in form %}
+                    {% if field.name != "cantidad_entregas" %}
+                    <div class="{% if field.name == 'observaciones' %}col-12{% else %}col-md-6{% endif %}">
+                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <hr class="ws-divider my-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">Destinos de entrega</h2>
+                    <button class="btn btn-ws-pill-outline btn-sm" type="button" id="add-destination"><i class="bi bi-plus-lg me-1"></i>Agregar destino</button>
+                </div>
+                <p class="text-secondary small">Puedes agregar hasta 20 destinos en una solicitud.</p>
+                {{ destinos.management_form }}
+                {% if destinos.non_form_errors %}<div class="text-danger small mb-3">{{ destinos.non_form_errors }}</div>{% endif %}
+                <div id="destination-list" class="d-grid gap-3">
+                    {% for destino_form in destinos %}
+                    <div class="ws-form-section destination-row">
+                        <div class="d-flex justify-content-between align-items-center mb-3"><strong>Destino {{ forloop.counter }}</strong><button class="btn btn-sm btn-link text-danger remove-destination" type="button">Quitar</button></div>
+                        <div class="row g-3">{% for field in destino_form %}<div class="{% if field.name == 'direccion_destino' %}col-12{% else %}col-md-4{% endif %}"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}</div>{% endfor %}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <template id="destination-template">
+                    <div class="ws-form-section destination-row">
+                        <div class="d-flex justify-content-between align-items-center mb-3"><strong>Nuevo destino</strong><button class="btn btn-sm btn-link text-danger remove-destination" type="button">Quitar</button></div>
+                        <div class="row g-3">{% for field in destinos.empty_form %}<div class="{% if field.name == 'direccion_destino' %}col-12{% else %}col-md-4{% endif %}"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}</div>{% endfor %}</div>
+                    </div>
+                </template>
+                <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
+                    <a href="{% url 'services:list' %}" class="btn btn-ws-pill-outline">Cancelar</a>
+                    <button class="btn btn-ws-pill-solid" type="submit"><i class="bi bi-send me-1"></i>Enviar solicitud</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<script>
+    (() => {
+        const list = document.getElementById("destination-list");
+        const total = document.getElementById("id_destinos-TOTAL_FORMS");
+        const addButton = document.getElementById("add-destination");
+        const template = document.getElementById("destination-template");
+        addButton.addEventListener("click", () => {
+            const count = Number(total.value);
+            if (count >= 20) return;
+            const row = document.createElement("div");
+            row.innerHTML = template.innerHTML.replaceAll("__prefix__", count);
+            list.append(row.firstElementChild);
+            total.value = count + 1;
+        });
+        list.addEventListener("click", (event) => {
+            const button = event.target.closest(".remove-destination");
+            if (button && list.querySelectorAll(".destination-row").length > 1) {
+                button.closest(".destination-row").remove();
+            }
+        });
+    })();
+</script>
+{% endblock %}

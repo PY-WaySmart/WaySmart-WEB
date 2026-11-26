@@ -1,0 +1,9 @@
+{% for asignacion in assignments %}
+<div class="ws-list-row">
+    <span class="ws-list-icon"><i class="bi bi-sign-turn-right"></i></span>
+    <div class="flex-grow-1"><strong>{{ asignacion.servicio.codigo_servicio }}</strong><small>{{ asignacion.servicio.direccion_recogidas }}</small></div>
+    <span class="ws-status status-{{ asignacion.estado|slugify }}">{{ asignacion.estado }}</span>
+</div>
+{% empty %}
+<div class="ws-empty-state"><i class="bi bi-signpost-split"></i><p>No hay asignaciones pendientes.</p></div>
+{% endfor %}
