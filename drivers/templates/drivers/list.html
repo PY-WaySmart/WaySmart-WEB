@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Repartidores | WaySmart{% endblock %}
 {% block content %}
-<h1>Repartidores</h1>
-<ul class="list-group">
-    {% for repartidor in object_list %}
-    <li class="list-group-item">{{ repartidor }} — {{ repartidor.get_estado_display }}</li>
-    {% empty %}
-    <li class="list-group-item">No hay repartidores registrados.</li>
-    {% endfor %}
-</ul>
+<div class="container py-4 py-lg-5">
+    <div class="ws-card p-4">
+        <div class="ws-section-heading"><div><span class="font-mono-ws text-info">RED OPERATIVA</span><h1 class="ws-hero-title h2 mb-0">{% if user.is_staff %}Repartidores{% else %}Mi perfil{% endif %}</h1></div>{% if user.is_staff %}<a href="/admin/drivers/repartidor/add/" class="btn btn-ws-pill-solid btn-sm"><i class="bi bi-plus-lg me-1"></i>Nuevo repartidor</a>{% else %}<a href="{% url 'drivers:profile' %}" class="btn btn-ws-pill-solid btn-sm"><i class="bi bi-pencil me-1"></i>Editar perfil</a>{% endif %}</div>
+        <div class="table-responsive"><table class="table ws-table align-middle"><thead><tr><th>Repartidor</th><th>Identificación</th><th>Teléfono</th><th>Estado</th></tr></thead><tbody>{% for repartidor in object_list %}<tr><td><strong>{{ repartidor }}</strong></td><td>{{ repartidor.nro_identificacion|default:"—" }}</td><td>{{ repartidor.telefono|default:"—" }}</td><td><span class="ws-status status-{{ repartidor.estado|lower }}">{{ repartidor.estado|default:"Pendiente" }}</span></td></tr>{% empty %}<tr><td colspan="4"><div class="ws-empty-state"><i class="bi bi-bicycle"></i><p>No hay repartidores registrados.</p></div></td></tr>{% endfor %}</tbody></table></div>
+    </div>
+</div>
 {% endblock %}

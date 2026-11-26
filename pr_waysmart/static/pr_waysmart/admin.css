@@ -1,0 +1,64 @@
+#content button,
+#content input[type="submit"],
+#content input[type="button"],
+#content a.button,
+#content a[role="button"],
+#content a[class*="bg-primary"],
+.submit-row input,
+.object-tools a {
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease,
+        filter 160ms ease;
+}
+
+#content button:hover:not(:disabled),
+#content input[type="submit"]:hover:not(:disabled),
+#content input[type="button"]:hover:not(:disabled),
+#content a.button:hover,
+#content a[role="button"]:hover,
+#content a[class*="bg-primary"]:hover,
+.submit-row input:hover:not(:disabled),
+.object-tools a:hover {
+    filter: brightness(1.06);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgb(3 47 98 / 18%);
+}
+
+#content button:active:not(:disabled),
+#content input[type="submit"]:active:not(:disabled),
+#content input[type="button"]:active:not(:disabled),
+#content a.button:active,
+#content a[role="button"]:active,
+#content a[class*="bg-primary"]:active,
+.submit-row input:active:not(:disabled),
+.object-tools a:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: none;
+}
+
+#content button:focus-visible,
+#content input[type="submit"]:focus-visible,
+#content input[type="button"]:focus-visible,
+#content a.button:focus-visible,
+#content a[role="button"]:focus-visible,
+#content a[class*="bg-primary"]:focus-visible,
+.submit-row input:focus-visible,
+.object-tools a:focus-visible {
+    outline: 3px solid rgb(56 116 250 / 55%);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #content button,
+    #content input[type="submit"],
+    #content input[type="button"],
+    #content a.button,
+    #content a[role="button"],
+    #content a[class*="bg-primary"],
+    .submit-row input,
+    .object-tools a {
+        transition: none;
+        transform: none;
+    }
+}
