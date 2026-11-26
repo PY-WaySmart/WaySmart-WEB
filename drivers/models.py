@@ -3,6 +3,12 @@ from django.db import models
 
 
 class Repartidor(models.Model):
+    class Estado(models.TextChoices):
+        PENDIENTE = "pendiente", "Pendiente"
+        APROBADO = "aprobado", "Aprobado"
+        RECHAZADO = "rechazado", "Rechazado"
+        INACTIVO = "inactivo", "Inactivo"
+
     usuario = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
@@ -12,11 +18,23 @@ class Repartidor(models.Model):
     )
     nombres = models.CharField(max_length=100, null=True, blank=True)
     apellidos = models.CharField(max_length=100, null=True, blank=True)
-    nro_identificacion = models.CharField(max_length=30, null=True, blank=True)
+    # unique para cumplir correo/documento únicos en el registro
+    nro_identificacion = models.CharField(max_length=30, unique=True, null=True, blank=True)
     telefono = models.CharField(max_length=20, null=True, blank=True)
-    estado = models.CharField(max_length=50, null=True, blank=True)
+    # Estado inicial PENDIENTE: el admin aprueba después
+    estado = models.CharField(
+        max_length=50,
+        choices=Estado.choices,
+        default=Estado.PENDIENTE,
+        null=True,
+        blank=True,
+    )
     observacion_rechazo = models.TextField(null=True, blank=True)
     fecha_validacion = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Repartidor"
+        verbose_name_plural = "Repartidores"
 
     def __str__(self):
         return " ".join(filter(None, (self.nombres, self.apellidos))) or f"Repartidor #{self.pk}"
