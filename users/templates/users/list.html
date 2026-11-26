@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Usuarios | WaySmart{% endblock %}
 {% block content %}
-<h1>Perfiles de usuario</h1>
-<ul class="list-group">
-    {% for perfil in object_list %}
-    <li class="list-group-item">{{ perfil.usuario }} — {{ perfil.get_rol_display }} ({{ perfil.get_estado_display }})</li>
-    {% empty %}
-    <li class="list-group-item">No hay perfiles registrados.</li>
-    {% endfor %}
-</ul>
+<div class="container py-5">
+    <div class="ws-card p-4">
+        <h1 class="ws-hero-title h2 mb-4">Perfiles de usuario</h1>
+        <div class="table-responsive">
+            <table class="table ws-table align-middle">
+                {% for perfil in object_list %}
+                <tr><td>{{ perfil.usuario }} — {{ perfil.get_rol_display }} ({{ perfil.get_estado_display }})</td></tr>
+                {% empty %}
+                <tr><td>No hay perfiles registrados.</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

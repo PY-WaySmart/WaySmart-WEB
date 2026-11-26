@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Repartidores | WaySmart{% endblock %}
 {% block content %}
-<h1>Repartidores</h1>
-<ul class="list-group">
-    {% for repartidor in object_list %}
-    <li class="list-group-item">{{ repartidor }} — {{ repartidor.get_estado_display }}</li>
-    {% empty %}
-    <li class="list-group-item">No hay repartidores registrados.</li>
-    {% endfor %}
-</ul>
+<div class="container py-5">
+    <div class="ws-card p-4">
+        <h1 class="ws-hero-title h2 mb-4">Repartidores</h1>
+        <table class="table ws-table align-middle">
+            {% for repartidor in object_list %}
+            <tr><td>{{ repartidor }} — {{ repartidor.get_estado_display }}</td></tr>
+            {% empty %}
+            <tr><td>No hay repartidores registrados.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}
