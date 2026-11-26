@@ -418,3 +418,79 @@ class AssignmentWorkflowTests(TestCase):
             {"estado": "Aceptada"},
         )
         self.assertEqual(response.status_code, 403)
+
+
+class UserAdminDeleteTests(TestCase):
+    def test_admin_can_delete_user_after_confirmation(self):
+        user_model = get_user_model()
+        admin_user = user_model.objects.create_superuser(
+            username="admin-delete",
+            email="admin-delete@example.com",
+            password="TestPass123!",
+        )
+        user = user_model.objects.create_user(
+            username="delete-me",
+            email="delete-me@example.com",
+            password="TestPass123!",
+        )
+        self.client.force_login(admin_user)
+
+        changelist_url = reverse(
+            f"admin:{user_model._meta.app_label}_{user_model._meta.model_name}_changelist"
+        )
+        response = self.client.get(changelist_url)
+        self.assertContains(response, "Eliminar")
+
+        action_url = reverse(
+            f"admin:{user_model._meta.app_label}_{user_model._meta.model_name}_delete_user",
+            args=[user.pk],
+        )
+        delete_url = reverse(
+            f"admin:{user_model._meta.app_label}_{user_model._meta.model_name}_delete",
+            args=[user.pk],
+        )
+        response = self.client.get(action_url)
+        self.assertRedirects(response, delete_url, fetch_redirect_response=False)
+
+        confirmation = self.client.get(delete_url)
+        self.assertEqual(confirmation.status_code, 200)
+
+        response = self.client.post(delete_url, {"post": "yes"})
+        self.assertRedirects(response, changelist_url)
+        self.assertFalse(user_model.objects.filter(pk=user.pk).exists())
+
+    def test_admin_cannot_delete_user_with_protected_company(self):
+        user_model = get_user_model()
+        admin_user = user_model.objects.create_superuser(
+            username="admin-protected-delete",
+            email="admin-protected-delete@example.com",
+            password="TestPass123!",
+        )
+        user = user_model.objects.create_user(
+            username="company-user",
+            email="company-user@example.com",
+            password="TestPass123!",
+        )
+        Empresa.objects.create(
+            usuario=user,
+            nombre="Empresa protegida",
+            nit="900333444",
+            direccion="Calle 1",
+            telefono_contacto="3000000000",
+            representante_legal_nombre="Ana",
+            representante_legal_telefono="3000000000",
+            representante_legal_correo="ana@empresa.com",
+            tipo_colaboracion=Empresa.TipoColaboracion.SOCIO,
+        )
+        self.client.force_login(admin_user)
+
+        delete_url = reverse(
+            f"admin:{user_model._meta.app_label}_{user_model._meta.model_name}_delete",
+            args=[user.pk],
+        )
+        confirmation = self.client.get(delete_url)
+        self.assertContains(confirmation, "Empresa protegida")
+
+        response = self.client.post(delete_url, {"post": "yes"})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(user_model.objects.filter(pk=user.pk).exists())

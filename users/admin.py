@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.db import transaction
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -75,6 +75,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
         "activate_user",
         "block_user",
         "inactivate_user",
+        "delete_user",
     )
     readonly_fields = ("is_active",)
 
@@ -104,6 +105,17 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
             and perfil
             and perfil.rol == Perfil.Rol.ADMINISTRADOR
         )
+
+    def has_delete_user_permission(self, request):
+        return self.has_delete_permission(request)
+
+    def get_deleted_objects(self, objs, request):
+        deleted_objects, model_count, perms_needed, protected = (
+            super().get_deleted_objects(objs, request)
+        )
+        # A user's profile is deleted with the user, not as a separate admin object.
+        perms_needed.discard(str(Perfil._meta.verbose_name))
+        return deleted_objects, model_count, perms_needed, protected
 
     @admin.display(description="Rol", ordering="perfil__rol")
     def get_rol(self, obj):
@@ -205,8 +217,10 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
             "inactivo",
         )
 
-    def has_delete_permission(self, request, obj=None):
-        return False
+    @action(description="Eliminar", permissions=["delete_user"])
+    def delete_user(self, request, object_id):
+        delete_url = f"admin:{User._meta.app_label}_{User._meta.model_name}_delete"
+        return HttpResponseRedirect(reverse_lazy(delete_url, args=[object_id]))
 
     def get_actions(self, request):
         actions = super().get_actions(request)
