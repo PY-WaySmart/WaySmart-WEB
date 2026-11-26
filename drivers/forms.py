@@ -140,3 +140,15 @@ class RegistroRepartidorForm(forms.Form):
         if password and confirmacion and password != confirmacion:
             self.add_error("password_confirmacion", "Las contraseñas no coinciden.")
         return cleaned
+
+
+class PerfilRepartidorForm(forms.ModelForm):
+    class Meta:
+        model = Repartidor
+        fields = ("nombres", "apellidos", "nro_identificacion", "telefono")
+        widgets = {
+            "nombres": forms.TextInput(attrs={"class": "ws-input form-control"}),
+            "apellidos": forms.TextInput(attrs={"class": "ws-input form-control"}),
+            "nro_identificacion": forms.TextInput(attrs={"class": "ws-input form-control"}),
+            "telefono": forms.TextInput(attrs={"class": "ws-input form-control"}),
+        }

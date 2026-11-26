@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Usuarios | WaySmart{% endblock %}
 {% block content %}
-<h1>Perfiles de usuario</h1>
-<ul class="list-group">
-    {% for perfil in object_list %}
-    <li class="list-group-item">{{ perfil.usuario }} — {{ perfil.get_rol_display }} ({{ perfil.get_estado_display }})</li>
-    {% empty %}
-    <li class="list-group-item">No hay perfiles registrados.</li>
-    {% endfor %}
-</ul>
+<div class="container py-4 py-lg-5">
+    <div class="ws-card p-4">
+        <div class="ws-section-heading">
+            <div><span class="font-mono-ws text-info">DIRECTORIO</span><h1 class="ws-hero-title h2 mb-0">Perfiles de usuario</h1></div>
+            <a href="/admin/auth/user/" class="btn btn-ws-pill-solid btn-sm"><i class="bi bi-person-plus me-1"></i>Administrar</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table ws-table align-middle">
+                <thead><tr><th>Usuario</th><th>Rol</th><th>Estado</th><th>Registro</th></tr></thead>
+                <tbody>{% for perfil in object_list %}<tr><td><strong>{{ perfil.usuario.get_full_name|default:perfil.usuario.username }}</strong><small class="d-block text-secondary">{{ perfil.usuario.email }}</small></td><td>{{ perfil.get_rol_display }}</td><td><span class="ws-status status-{{ perfil.estado }}">{{ perfil.get_estado_display }}</span></td><td>{{ perfil.fecha_creacion|date:"d/m/Y" }}</td></tr>{% empty %}<tr><td colspan="4"><div class="ws-empty-state"><i class="bi bi-people"></i><p>No hay perfiles registrados.</p></div></td></tr>{% endfor %}</tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}
