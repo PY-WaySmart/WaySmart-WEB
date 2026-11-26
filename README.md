@@ -27,8 +27,6 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-(OPCIONAL DE MOMENTO) => Completa `SECRET_KEY` en `.env` con una clave local antes de iniciar el servidor.
-
 ## Flujos disponibles
 
 - El registro crea una cuenta pendiente y un perfil de empresa o repartidor con sus datos básicos.
