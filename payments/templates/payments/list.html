@@ -1,10 +1,93 @@
 {% extends "base.html" %}
+
 {% block title %}Pagos | WaySmart{% endblock %}
+
 {% block content %}
+<style>
+    /* Fuerza el color del cuadro / fila de la tabla en esta página */
+    .ws-pagos-table {
+        --bs-table-bg: transparent;
+        --bs-table-color: #e8f1f8;
+        --bs-table-border-color: rgba(255, 255, 255, 0.12);
+        background: transparent !important;
+        color: #e8f1f8 !important;
+    }
+
+    .ws-pagos-table thead th {
+        background: rgba(255, 255, 255, 0.04) !important;
+        color: #8fb3c9 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+    }
+
+    .ws-pagos-table tbody tr,
+    .ws-pagos-table tbody td {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: #e8f1f8 !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .ws-pagos-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.06) !important;
+    }
+</style>
+
 <div class="container py-4 py-lg-5">
     <div class="ws-card p-4">
-        <div class="ws-section-heading"><div><span class="font-mono-ws text-info">FINANZAS</span><h1 class="ws-hero-title h2 mb-0">{% if user.is_staff %}Pagos a repartidores{% else %}Mis pagos{% endif %}</h1></div>{% if user.is_staff %}<a href="/admin/payments/pagorepartidor/add/" class="btn btn-ws-pill-solid btn-sm"><i class="bi bi-plus-lg me-1"></i>Registrar pago</a>{% endif %}</div>
-        <div class="table-responsive"><table class="table ws-table align-middle"><thead><tr><th>Repartidor</th><th>Total generado</th><th>Comisión</th><th>Neto</th><th>Fecha</th><th>Estado</th></tr></thead><tbody>{% for pago in object_list %}<tr><td><strong>{{ pago.repartidor }}</strong></td><td>${{ pago.monto_total_generado }}</td><td>${{ pago.comision_plataforma }}</td><td class="text-info fw-bold">${{ pago.monto_neto }}</td><td>{{ pago.fecha_pago|date:"d/m/Y" }}</td><td><span class="ws-status status-{{ pago.estado }}">{{ pago.get_estado_display }}</span></td></tr>{% empty %}<tr><td colspan="6"><div class="ws-empty-state"><i class="bi bi-wallet2"></i><p>No hay pagos registrados.</p></div></td></tr>{% endfor %}</tbody></table></div>
+        <div class="ws-section-heading mb-4">
+            <div>
+                <span class="font-mono-ws text-info">FINANZAS</span>
+                <h1 class="ws-hero-title h2 mb-0">
+                    {% if user.is_staff %}Pagos a repartidores{% else %}Mis pagos{% endif %}
+                </h1>
+            </div>
+            {% if user.is_staff %}
+                <a href="/admin/payments/pagorepartidor/add/" class="btn btn-ws-pill-solid btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i>Registrar pago
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="table-responsive">
+            <table class="table ws-table ws-pagos-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Repartidor</th>
+                        <th>Total generado</th>
+                        <th>Comisión</th>
+                        <th>Neto</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pago in object_list %}
+                        <tr>
+                            <td><strong>{{ pago.repartidor }}</strong></td>
+                            <td>${{ pago.monto_total_generado }}</td>
+                            <td>${{ pago.comision_plataforma }}</td>
+                            <td class="text-info fw-bold">${{ pago.monto_neto }}</td>
+                            <td>{{ pago.fecha_pago|date:"d/m/Y" }}</td>
+                            <td>
+                                <span class="ws-status status-{{ pago.estado }}">{{ pago.get_estado_display }}</span>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">
+                                <div class="ws-empty-state text-center py-4">
+                                    <i class="bi bi-wallet2"></i>
+                                    <p class="mb-0">No hay pagos registrados.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

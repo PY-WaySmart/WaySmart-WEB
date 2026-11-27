@@ -1,10 +1,137 @@
 {% extends "base.html" %}
+
 {% block title %}Repartidores | WaySmart{% endblock %}
+
 {% block content %}
+<style>
+    /* Fuerza el color del cuadro / fila de la tabla en esta página */
+    .ws-repartidores-table {
+        --bs-table-bg: transparent;
+        --bs-table-color: #e8f1f8;
+        --bs-table-border-color: rgba(255, 255, 255, 0.12);
+        background: transparent !important;
+        color: #e8f1f8 !important;
+    }
+
+    .ws-repartidores-table thead th {
+        background: rgba(255, 255, 255, 0.04) !important;
+        color: #8fb3c9 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+    }
+
+    .ws-repartidores-table tbody tr,
+    .ws-repartidores-table tbody td {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: #e8f1f8 !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .ws-repartidores-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.06) !important;
+    }
+</style>
+
 <div class="container py-4 py-lg-5">
     <div class="ws-card p-4">
-        <div class="ws-section-heading"><div><span class="font-mono-ws text-info">RED OPERATIVA</span><h1 class="ws-hero-title h2 mb-0">{% if user.is_staff %}Repartidores{% else %}Mi perfil{% endif %}</h1></div>{% if user.is_staff %}<a href="/admin/drivers/repartidor/add/" class="btn btn-ws-pill-solid btn-sm"><i class="bi bi-plus-lg me-1"></i>Nuevo repartidor</a>{% else %}<a href="{% url 'drivers:profile' %}" class="btn btn-ws-pill-solid btn-sm"><i class="bi bi-pencil me-1"></i>Editar perfil</a>{% endif %}</div>
-        <div class="table-responsive"><table class="table ws-table align-middle"><thead><tr><th>Repartidor</th><th>Identificación</th><th>Teléfono</th><th>Estado</th></tr></thead><tbody>{% for repartidor in object_list %}<tr><td><strong>{{ repartidor }}</strong></td><td>{{ repartidor.nro_identificacion|default:"—" }}</td><td>{{ repartidor.telefono|default:"—" }}</td><td><span class="ws-status status-{{ repartidor.estado|lower }}">{{ repartidor.estado|default:"Pendiente" }}</span></td></tr>{% empty %}<tr><td colspan="4"><div class="ws-empty-state"><i class="bi bi-bicycle"></i><p>No hay repartidores registrados.</p></div></td></tr>{% endfor %}</tbody></table></div>
+        <div class="ws-section-heading mb-4">
+            <div>
+                <span class="font-mono-ws text-info">RED OPERATIVA</span>
+                <h1 class="ws-hero-title h2 mb-0">
+                    {% if user.is_staff %}
+                        Repartidores
+                    {% else %}
+                        Mi perfil
+                    {% endif %}
+                </h1>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+                {% if user.is_staff %}
+                    <a href="/admin/drivers/repartidor/add/" class="btn btn-ws-pill-solid btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i>Nuevo repartidor
+                    </a>
+                    <a href="/admin/drivers/vehiculo/" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-truck me-1"></i>Validar vehículos
+                    </a>
+                {% else %}
+                    <a href="{% url 'drivers:profile' %}" class="btn btn-ws-pill-solid btn-sm">
+                        <i class="bi bi-pencil me-1"></i>Editar perfil
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mt-3">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="table-responsive">
+            <table class="table ws-table ws-repartidores-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Repartidor</th>
+                        <th>Identificación</th>
+                        <th>Teléfono</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for repartidor in object_list %}
+                        <tr>
+                            <td>
+                                <strong>
+                                    {% if repartidor.nombres or repartidor.apellidos %}
+                                        {{ repartidor.nombres|default:"" }} {{ repartidor.apellidos|default:"" }}
+                                    {% else %}
+                                        {{ repartidor }}
+                                    {% endif %}
+                                </strong>
+                            </td>
+                            <td>{{ repartidor.nro_identificacion|default:"—" }}</td>
+                            <td>{{ repartidor.telefono|default:"—" }}</td>
+                            <td>
+                                <span class="ws-status status-{{ repartidor.estado|lower }}">
+                                    {{ repartidor.estado|default:"Pendiente" }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">
+                                <div class="ws-empty-state text-center py-4">
+                                    <i class="bi bi-bicycle"></i>
+                                    <p class="mb-0">No hay repartidores registrados.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if not user.is_staff %}
+            <div class="mt-4 p-3 rounded" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+                <h5 class="mb-2">Gestión de vehículos</h5>
+                <p class="mb-3" style="color: #8fb3c9;">
+                    Registra un vehículo o revisa el estado de los que ya tienes
+                    (pendiente, activo o rechazado). Si fue rechazado, podrás volver a subir los documentos.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'drivers:mis_vehiculos' %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-truck me-1"></i>Mis vehículos
+                    </a>
+                    <a href="{% url 'drivers:registro_vehiculo' %}" class="btn btn-success btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i>Registrar vehículo
+                    </a>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
