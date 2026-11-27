@@ -18,10 +18,8 @@ class Repartidor(models.Model):
     )
     nombres = models.CharField(max_length=100, null=True, blank=True)
     apellidos = models.CharField(max_length=100, null=True, blank=True)
-    # unique para cumplir correo/documento únicos en el registro
     nro_identificacion = models.CharField(max_length=30, unique=True, null=True, blank=True)
     telefono = models.CharField(max_length=20, null=True, blank=True)
-    # Estado inicial PENDIENTE: el admin aprueba después
     estado = models.CharField(
         max_length=50,
         choices=Estado.choices,
@@ -74,6 +72,7 @@ class Vehiculo(models.Model):
         CARRO = "CARRO", "Carro"
         CAMIONETA = "CAMIONETA", "Camioneta"
         FURGON = "FURGON", "Furgón"
+        BICICLETA = "BICICLETA", "Bicicleta"
         OTRO = "OTRO", "Otro"
 
     class Estado(models.TextChoices):
@@ -91,6 +90,8 @@ class Vehiculo(models.Model):
         Color,
         on_delete=models.PROTECT,
         related_name="vehiculos",
+        null=True,
+        blank=True,
     )
     repartidor = models.ForeignKey(
         Repartidor,
@@ -101,9 +102,13 @@ class Vehiculo(models.Model):
     marca = models.CharField(max_length=100)
     linea = models.CharField(max_length=100)
     placa = models.CharField(max_length=20, unique=True)
-    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
+    estado = models.CharField(
+        max_length=20,
+        choices=Estado.choices,
+        default=Estado.PENDIENTE,
+    )
     observacion_rechazo = models.TextField(blank=True, null=True)
-    activo = models.BooleanField(default=True)
+    activo = models.BooleanField(default=False)  # False hasta que el admin apruebe
     fecha_validacion = models.DateTimeField(null=True, blank=True)
 
     class Meta:
@@ -123,6 +128,7 @@ class Documento(models.Model):
     class EntidadTipo(models.TextChoices):
         EMPRESA = "empresa", "Empresa"
         REPARTIDOR = "repartidor", "Repartidor"
+        VEHICULO = "vehiculo", "Vehículo"
 
     tipo_documento = models.CharField(max_length=100)
     url_archivo = models.CharField(max_length=200)
@@ -144,6 +150,13 @@ class Documento(models.Model):
     )
     empresa = models.ForeignKey(
         "companies.Empresa",
+        on_delete=models.CASCADE,
+        related_name="documentos",
+        null=True,
+        blank=True,
+    )
+    vehiculo = models.ForeignKey(
+        "Vehiculo",
         on_delete=models.CASCADE,
         related_name="documentos",
         null=True,

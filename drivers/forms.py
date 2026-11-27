@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
-from .models import Repartidor
+from .models import Repartidor, Vehiculo
 
 User = get_user_model()
 
@@ -98,20 +98,16 @@ class RegistroRepartidorForm(forms.Form):
         nombre = (archivo.name or "").strip().lower()
         content_type = (getattr(archivo, "content_type", "") or "").lower()
 
-        # 1) Extensión .pdf obligatoria
         if not nombre.endswith(".pdf"):
             raise ValidationError("Solo se permiten archivos con extensión .pdf.")
 
-        # 2) Tipo MIME (si el navegador lo envía)
         tipos_permitidos = {"application/pdf", "application/x-pdf"}
         if content_type and content_type not in tipos_permitidos:
             raise ValidationError("El archivo debe ser un PDF válido.")
 
-        # 3) Tamaño máximo
         if archivo.size > MAX_PDF_SIZE:
             raise ValidationError("El PDF no puede superar 5 MB.")
 
-        # 4) Cabecera real del PDF (%PDF)
         try:
             firma = archivo.read(5)
             archivo.seek(0)
@@ -152,3 +148,96 @@ class PerfilRepartidorForm(forms.ModelForm):
             "nro_identificacion": forms.TextInput(attrs={"class": "ws-input form-control"}),
             "telefono": forms.TextInput(attrs={"class": "ws-input form-control"}),
         }
+
+
+class RegistroVehiculoForm(forms.Form):
+    tipo = forms.ChoiceField(
+        label="Tipo de vehículo",
+        choices=Vehiculo.Tipo.choices,
+        error_messages={"required": "Debes seleccionar el tipo de vehículo."},
+    )
+    marca = forms.CharField(
+        label="Marca",
+        max_length=100,
+        error_messages={
+            "required": "La marca es obligatoria.",
+            "max_length": "La marca no puede superar 100 caracteres.",
+        },
+    )
+    linea = forms.CharField(
+        label="Modelo / Línea",
+        max_length=100,
+        error_messages={
+            "required": "El modelo o línea es obligatorio.",
+            "max_length": "El modelo/línea no puede superar 100 caracteres.",
+        },
+    )
+    placa = forms.CharField(
+        label="Placa",
+        max_length=20,
+        error_messages={
+            "required": "La placa es obligatoria.",
+            "max_length": "La placa no puede superar 20 caracteres.",
+        },
+    )
+    soat = forms.FileField(
+        label="SOAT (PDF)",
+        required=True,
+        widget=forms.FileInput(attrs={"accept": "application/pdf,.pdf"}),
+        error_messages={"required": "Debes subir el SOAT en PDF."},
+        help_text="Solo archivos PDF (máx. 5 MB).",
+    )
+    licencia = forms.FileField(
+        label="Licencia de conducción (PDF)",
+        required=True,
+        widget=forms.FileInput(attrs={"accept": "application/pdf,.pdf"}),
+        error_messages={"required": "Debes subir la licencia en PDF."},
+        help_text="Solo archivos PDF (máx. 5 MB).",
+    )
+
+    def clean_placa(self):
+        placa = self.cleaned_data["placa"].strip().upper()
+
+        if not re.fullmatch(r"[A-Z0-9\-]{5,12}", placa):
+            raise ValidationError(
+                "La placa debe tener entre 5 y 12 caracteres (letras, números o guion)."
+            )
+
+        if Vehiculo.objects.filter(placa__iexact=placa).exists():
+            raise ValidationError("Esta placa ya está registrada en el sistema.")
+
+        return placa
+
+    def _validar_pdf(self, archivo, nombre_campo):
+        if not archivo:
+            return None
+
+        nombre = (archivo.name or "").strip().lower()
+        content_type = (getattr(archivo, "content_type", "") or "").lower()
+
+        if not nombre.endswith(".pdf"):
+            raise ValidationError(f"El archivo de {nombre_campo} debe tener extensión .pdf.")
+
+        tipos_permitidos = {"application/pdf", "application/x-pdf"}
+        if content_type and content_type not in tipos_permitidos:
+            raise ValidationError(f"El archivo de {nombre_campo} debe ser un PDF válido.")
+
+        if archivo.size > MAX_PDF_SIZE:
+            raise ValidationError(f"El PDF de {nombre_campo} no puede superar 5 MB.")
+
+        try:
+            firma = archivo.read(5)
+            archivo.seek(0)
+        except Exception:
+            raise ValidationError(f"No se pudo leer el archivo de {nombre_campo}.")
+
+        if firma != b"%PDF-":
+            raise ValidationError(f"El archivo de {nombre_campo} no es un PDF válido.")
+
+        return archivo
+
+    def clean_soat(self):
+        return self._validar_pdf(self.cleaned_data.get("soat"), "SOAT")
+
+    def clean_licencia(self):
+        return self._validar_pdf(self.cleaned_data.get("licencia"), "licencia")

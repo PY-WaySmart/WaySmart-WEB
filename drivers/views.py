@@ -14,8 +14,8 @@ from django.views.generic import ListView
 
 from users.models import Perfil
 
-from .forms import RegistroRepartidorForm, PerfilRepartidorForm
-from .models import Documento, Repartidor
+from .forms import RegistroRepartidorForm, PerfilRepartidorForm, RegistroVehiculoForm
+from .models import Documento, Repartidor, Vehiculo, Modelo, Color
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -37,11 +37,6 @@ class RepartidorListView(LoginRequiredMixin, ListView):
 
 
 def registro_repartidor_view(request):
-    """
-    Registro de repartidor.
-    Crea User + Perfil (REPARTIDOR, PENDIENTE) + Repartidor (PENDIENTE)
-    + Documento (PDF). Envía correo con el estado de la cuenta.
-    """
     if request.user.is_authenticated:
         messages.info(request, "Ya tienes una sesión iniciada.")
         return redirect("home")
@@ -92,10 +87,7 @@ def registro_repartidor_view(request):
 
         except Exception:
             logger.exception("Error al registrar repartidor")
-            messages.error(
-                request,
-                "No se pudo completar el registro. Intenta de nuevo.",
-            )
+            messages.error(request, "No se pudo completar el registro. Intenta de nuevo.")
             return render(request, "drivers/registro.html", {"form": form})
 
         try:
@@ -123,10 +115,6 @@ def registro_repartidor_view(request):
 
 
 def enviar_correo_registro(email, nombres, apellidos):
-    """
-    Envía correo de confirmación indicando que la cuenta quedó en estado PENDIENTE.
-    Si no hay EMAIL_HOST_PASSWORD en el .env local, se imprime en la terminal.
-    """
     asunto = "WaySmart – Confirmación de registro de repartidor"
     mensaje = (
         f"Hola {nombres} {apellidos},\n\n"
@@ -158,3 +146,78 @@ def editar_perfil_repartidor(request):
         messages.success(request, "Los datos de tu perfil fueron actualizados.")
         return redirect("drivers:list")
     return render(request, "drivers/profile_form.html", {"form": form})
+
+
+@login_required
+def registro_vehiculo_view(request):
+    """
+    Solo un repartidor autenticado puede registrar un vehículo.
+    El vehículo queda en estado PENDIENTE.
+    """
+    perfil = getattr(request.user, "perfil", None)
+    if not perfil or perfil.rol != Perfil.Rol.REPARTIDOR:
+        raise PermissionDenied("Solo los repartidores pueden registrar vehículos.")
+
+    try:
+        repartidor = request.user.repartidor
+    except Repartidor.DoesNotExist:
+        raise PermissionDenied("No tienes un perfil de repartidor asociado.")
+
+    form = RegistroVehiculoForm(request.POST or None, request.FILES or None)
+
+    if request.method == "POST" and form.is_valid():
+        data = form.cleaned_data
+
+        try:
+            with transaction.atomic():
+                modelo = Modelo.objects.create(
+                    marca=data["marca"],
+                    nombre=data["linea"],
+                    anio="",
+                )
+                color = Color.objects.create()
+
+                vehiculo = Vehiculo.objects.create(
+                    modelo=modelo,
+                    color=color,
+                    repartidor=repartidor,
+                    tipo=data["tipo"],
+                    marca=data["marca"],
+                    linea=data["linea"],
+                    placa=data["placa"],
+                    estado=Vehiculo.Estado.PENDIENTE,
+                    activo=False,
+                )
+
+                documentos = [
+                    ("soat", data["soat"]),
+                    ("licencia", data["licencia"]),
+                ]
+
+                for tipo_doc, archivo in documentos:
+                    ruta = default_storage.save(
+                        f"vehiculos/{vehiculo.placa}/{tipo_doc}_{archivo.name}",
+                        archivo,
+                    )
+                    Documento.objects.create(
+                        tipo_documento=tipo_doc,
+                        url_archivo=ruta,
+                        estado=Documento.Estado.VIGENTE,
+                        usuario=request.user,
+                        repartidor=repartidor,
+                        vehiculo=vehiculo,
+                        entidad_tipo=Documento.EntidadTipo.VEHICULO,
+                    )
+
+            messages.success(
+                request,
+                f"Vehículo con placa {data['placa']} registrado correctamente. "
+                "Quedó pendiente de aprobación por un administrador.",
+            )
+            return redirect("drivers:list")
+
+        except Exception:
+            logger.exception("Error al registrar vehículo")
+            messages.error(request, "No se pudo registrar el vehículo. Intenta de nuevo.")
+
+    return render(request, "drivers/registro_vehiculo.html", {"form": form})
