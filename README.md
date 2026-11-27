@@ -1,4 +1,4 @@
-# WaySmart v1.0.0
+# WaySmart v1.1.0
 ## Equipo
 
 Organización: `PY-WaySmart`.
