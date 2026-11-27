@@ -241,3 +241,54 @@ class RegistroVehiculoForm(forms.Form):
 
     def clean_licencia(self):
         return self._validar_pdf(self.cleaned_data.get("licencia"), "licencia")
+
+
+class ReenviarDocumentosVehiculoForm(forms.Form):
+    soat = forms.FileField(
+        label="SOAT (PDF)",
+        required=True,
+        widget=forms.FileInput(attrs={"accept": "application/pdf,.pdf"}),
+        error_messages={"required": "Debes subir el SOAT en PDF."},
+        help_text="Solo archivos PDF (máx. 5 MB).",
+    )
+    licencia = forms.FileField(
+        label="Licencia de conducción (PDF)",
+        required=True,
+        widget=forms.FileInput(attrs={"accept": "application/pdf,.pdf"}),
+        error_messages={"required": "Debes subir la licencia en PDF."},
+        help_text="Solo archivos PDF (máx. 5 MB).",
+    )
+
+    def _validar_pdf(self, archivo, nombre_campo):
+        if not archivo:
+            return None
+
+        nombre = (archivo.name or "").strip().lower()
+        content_type = (getattr(archivo, "content_type", "") or "").lower()
+
+        if not nombre.endswith(".pdf"):
+            raise ValidationError(f"El archivo de {nombre_campo} debe tener extensión .pdf.")
+
+        tipos_permitidos = {"application/pdf", "application/x-pdf"}
+        if content_type and content_type not in tipos_permitidos:
+            raise ValidationError(f"El archivo de {nombre_campo} debe ser un PDF válido.")
+
+        if archivo.size > MAX_PDF_SIZE:
+            raise ValidationError(f"El PDF de {nombre_campo} no puede superar 5 MB.")
+
+        try:
+            firma = archivo.read(5)
+            archivo.seek(0)
+        except Exception:
+            raise ValidationError(f"No se pudo leer el archivo de {nombre_campo}.")
+
+        if firma != b"%PDF-":
+            raise ValidationError(f"El archivo de {nombre_campo} no es un PDF válido.")
+
+        return archivo
+
+    def clean_soat(self):
+        return self._validar_pdf(self.cleaned_data.get("soat"), "SOAT")
+
+    def clean_licencia(self):
+        return self._validar_pdf(self.cleaned_data.get("licencia"), "licencia")

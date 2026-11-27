@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
+from django.utils import timezone
 
 
 class Repartidor(models.Model):
@@ -108,7 +109,7 @@ class Vehiculo(models.Model):
         default=Estado.PENDIENTE,
     )
     observacion_rechazo = models.TextField(blank=True, null=True)
-    activo = models.BooleanField(default=False)  # False hasta que el admin apruebe
+    activo = models.BooleanField(default=False)
     fecha_validacion = models.DateTimeField(null=True, blank=True)
 
     class Meta:
@@ -118,6 +119,68 @@ class Vehiculo(models.Model):
 
     def __str__(self):
         return f"{self.placa} - {self.marca}"
+
+    def tiene_documentos_expirados(self):
+        return self.documentos.filter(estado=Documento.Estado.EXPIRADO).exists()
+
+    def documentos_expirados(self):
+        return self.documentos.filter(estado=Documento.Estado.EXPIRADO)
+
+    @transaction.atomic
+    def aprobar(self):
+        Vehiculo.objects.filter(
+            repartidor=self.repartidor,
+            activo=True,
+        ).exclude(pk=self.pk).update(
+            activo=False,
+            estado=Vehiculo.Estado.INACTIVO,
+        )
+
+        self.estado = Vehiculo.Estado.ACTIVO
+        self.activo = True
+        self.observacion_rechazo = None
+        self.fecha_validacion = timezone.now()
+        self.save(
+            update_fields=[
+                "estado",
+                "activo",
+                "observacion_rechazo",
+                "fecha_validacion",
+            ]
+        )
+
+    @transaction.atomic
+    def rechazar(self, motivo: str):
+        if not motivo or not str(motivo).strip():
+            raise ValueError("El motivo de rechazo es obligatorio.")
+
+        self.estado = Vehiculo.Estado.RECHAZADO
+        self.activo = False
+        self.observacion_rechazo = str(motivo).strip()
+        self.fecha_validacion = timezone.now()
+        self.save(
+            update_fields=[
+                "estado",
+                "activo",
+                "observacion_rechazo",
+                "fecha_validacion",
+            ]
+        )
+
+    @transaction.atomic
+    def reenviar_a_pendiente(self):
+        self.estado = Vehiculo.Estado.PENDIENTE
+        self.activo = False
+        self.observacion_rechazo = None
+        self.fecha_validacion = None
+        self.save(
+            update_fields=[
+                "estado",
+                "activo",
+                "observacion_rechazo",
+                "fecha_validacion",
+            ]
+        )
 
 
 class Documento(models.Model):
