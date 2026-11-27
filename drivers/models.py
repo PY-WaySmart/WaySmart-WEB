@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
+from django.utils import timezone
 
 
 class Repartidor(models.Model):
@@ -18,10 +19,8 @@ class Repartidor(models.Model):
     )
     nombres = models.CharField(max_length=100, null=True, blank=True)
     apellidos = models.CharField(max_length=100, null=True, blank=True)
-    # unique para cumplir correo/documento únicos en el registro
     nro_identificacion = models.CharField(max_length=30, unique=True, null=True, blank=True)
     telefono = models.CharField(max_length=20, null=True, blank=True)
-    # Estado inicial PENDIENTE: el admin aprueba después
     estado = models.CharField(
         max_length=50,
         choices=Estado.choices,
@@ -74,6 +73,7 @@ class Vehiculo(models.Model):
         CARRO = "CARRO", "Carro"
         CAMIONETA = "CAMIONETA", "Camioneta"
         FURGON = "FURGON", "Furgón"
+        BICICLETA = "BICICLETA", "Bicicleta"
         OTRO = "OTRO", "Otro"
 
     class Estado(models.TextChoices):
@@ -91,6 +91,8 @@ class Vehiculo(models.Model):
         Color,
         on_delete=models.PROTECT,
         related_name="vehiculos",
+        null=True,
+        blank=True,
     )
     repartidor = models.ForeignKey(
         Repartidor,
@@ -101,9 +103,13 @@ class Vehiculo(models.Model):
     marca = models.CharField(max_length=100)
     linea = models.CharField(max_length=100)
     placa = models.CharField(max_length=20, unique=True)
-    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
+    estado = models.CharField(
+        max_length=20,
+        choices=Estado.choices,
+        default=Estado.PENDIENTE,
+    )
     observacion_rechazo = models.TextField(blank=True, null=True)
-    activo = models.BooleanField(default=True)
+    activo = models.BooleanField(default=False)
     fecha_validacion = models.DateTimeField(null=True, blank=True)
 
     class Meta:
@@ -114,6 +120,68 @@ class Vehiculo(models.Model):
     def __str__(self):
         return f"{self.placa} - {self.marca}"
 
+    def tiene_documentos_expirados(self):
+        return self.documentos.filter(estado=Documento.Estado.EXPIRADO).exists()
+
+    def documentos_expirados(self):
+        return self.documentos.filter(estado=Documento.Estado.EXPIRADO)
+
+    @transaction.atomic
+    def aprobar(self):
+        Vehiculo.objects.filter(
+            repartidor=self.repartidor,
+            activo=True,
+        ).exclude(pk=self.pk).update(
+            activo=False,
+            estado=Vehiculo.Estado.INACTIVO,
+        )
+
+        self.estado = Vehiculo.Estado.ACTIVO
+        self.activo = True
+        self.observacion_rechazo = None
+        self.fecha_validacion = timezone.now()
+        self.save(
+            update_fields=[
+                "estado",
+                "activo",
+                "observacion_rechazo",
+                "fecha_validacion",
+            ]
+        )
+
+    @transaction.atomic
+    def rechazar(self, motivo: str):
+        if not motivo or not str(motivo).strip():
+            raise ValueError("El motivo de rechazo es obligatorio.")
+
+        self.estado = Vehiculo.Estado.RECHAZADO
+        self.activo = False
+        self.observacion_rechazo = str(motivo).strip()
+        self.fecha_validacion = timezone.now()
+        self.save(
+            update_fields=[
+                "estado",
+                "activo",
+                "observacion_rechazo",
+                "fecha_validacion",
+            ]
+        )
+
+    @transaction.atomic
+    def reenviar_a_pendiente(self):
+        self.estado = Vehiculo.Estado.PENDIENTE
+        self.activo = False
+        self.observacion_rechazo = None
+        self.fecha_validacion = None
+        self.save(
+            update_fields=[
+                "estado",
+                "activo",
+                "observacion_rechazo",
+                "fecha_validacion",
+            ]
+        )
+
 
 class Documento(models.Model):
     class Estado(models.TextChoices):
@@ -123,6 +191,7 @@ class Documento(models.Model):
     class EntidadTipo(models.TextChoices):
         EMPRESA = "empresa", "Empresa"
         REPARTIDOR = "repartidor", "Repartidor"
+        VEHICULO = "vehiculo", "Vehículo"
 
     tipo_documento = models.CharField(max_length=100)
     url_archivo = models.CharField(max_length=200)
@@ -144,6 +213,13 @@ class Documento(models.Model):
     )
     empresa = models.ForeignKey(
         "companies.Empresa",
+        on_delete=models.CASCADE,
+        related_name="documentos",
+        null=True,
+        blank=True,
+    )
+    vehiculo = models.ForeignKey(
+        "Vehiculo",
         on_delete=models.CASCADE,
         related_name="documentos",
         null=True,
