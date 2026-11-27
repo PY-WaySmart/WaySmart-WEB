@@ -1,34 +1,108 @@
 {% extends "base.html" %}
+
 {% block title %}Asignaciones y rutas | WaySmart{% endblock %}
+
 {% block content %}
+<style>
+    /* Fuerza el color del cuadro / fila de la tabla en esta página */
+    .ws-rutas-table {
+        --bs-table-bg: transparent;
+        --bs-table-color: #e8f1f8;
+        --bs-table-border-color: rgba(255, 255, 255, 0.12);
+        background: transparent !important;
+        color: #e8f1f8 !important;
+    }
+
+    .ws-rutas-table thead th {
+        background: rgba(255, 255, 255, 0.04) !important;
+        color: #8fb3c9 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+    }
+
+    .ws-rutas-table tbody tr,
+    .ws-rutas-table tbody td {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: #e8f1f8 !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .ws-rutas-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.06) !important;
+    }
+</style>
+
 <section class="container py-4 py-lg-5">
     <div class="ws-card p-4">
-        <div class="ws-section-heading">
-            <div><span class="font-mono-ws text-info">OPERACIÓN</span><h1 class="ws-hero-title h2 mb-0">Asignaciones y rutas</h1></div>
-            {% if user.is_staff %}<a href="{% url 'routes:assign' %}" class="btn btn-ws-pill-solid btn-sm"><i class="bi bi-person-plus me-1"></i>Asignar servicio</a>{% endif %}
+        <div class="ws-section-heading mb-4">
+            <div>
+                <span class="font-mono-ws text-info">OPERACIÓN</span>
+                <h1 class="ws-hero-title h2 mb-0">Asignaciones y rutas</h1>
+            </div>
+            {% if user.is_staff %}
+                <a href="{% url 'routes:assign' %}" class="btn btn-ws-pill-solid btn-sm">
+                    <i class="bi bi-person-plus me-1"></i>Asignar servicio
+                </a>
+            {% endif %}
         </div>
+
         <div class="table-responsive">
-            <table class="table ws-table align-middle">
-                <thead><tr><th>Servicio</th><th>Empresa</th><th>Repartidor</th><th>Estado</th><th>Acción</th></tr></thead>
+            <table class="table ws-table ws-rutas-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Servicio</th>
+                        <th>Empresa</th>
+                        <th>Repartidor</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for asignacion in object_list %}
-                    <tr>
-                        <td><strong>{{ asignacion.servicio.codigo_servicio }}</strong><small class="d-block text-secondary">{{ asignacion.servicio.direccion_recogidas }}</small></td>
-                        <td>{{ asignacion.servicio.empresa.nombre }}</td>
-                        <td>{{ asignacion.repartidor }}</td>
-                        <td><span class="ws-status status-{{ asignacion.estado|slugify }}">{{ asignacion.estado }}</span></td>
-                        <td>
-                            {% if not user.is_staff %}
-                                {% if asignacion.estado == "Pendiente" %}
-                                <form method="post" action="{% url 'routes:update_assignment' asignacion.pk %}">{% csrf_token %}<input type="hidden" name="estado" value="Aceptada"><button class="btn btn-ws-pill-solid btn-sm" type="submit">Aceptar</button></form>
-                                {% elif asignacion.estado == "Aceptada" or asignacion.estado == "En curso" %}
-                                <form method="post" action="{% url 'routes:update_assignment' asignacion.pk %}">{% csrf_token %}<input type="hidden" name="estado" value="Completada"><button class="btn btn-ws-pill-outline btn-sm" type="submit">Completar</button></form>
-                                {% else %}<span class="text-secondary small">—</span>{% endif %}
-                            {% else %}<span class="text-secondary small">—</span>{% endif %}
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>
+                                <strong>{{ asignacion.servicio.codigo_servicio }}</strong>
+                                <small class="d-block text-secondary">{{ asignacion.servicio.direccion_recogidas }}</small>
+                            </td>
+                            <td>{{ asignacion.servicio.empresa.nombre }}</td>
+                            <td>{{ asignacion.repartidor }}</td>
+                            <td>
+                                <span class="ws-status status-{{ asignacion.estado|slugify }}">{{ asignacion.estado }}</span>
+                            </td>
+                            <td>
+                                {% if not user.is_staff %}
+                                    {% if asignacion.estado == "Pendiente" %}
+                                        <form method="post" action="{% url 'routes:update_assignment' asignacion.pk %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="estado" value="Aceptada">
+                                            <button class="btn btn-ws-pill-solid btn-sm" type="submit">Aceptar</button>
+                                        </form>
+                                    {% elif asignacion.estado == "Aceptada" or asignacion.estado == "En curso" %}
+                                        <form method="post" action="{% url 'routes:update_assignment' asignacion.pk %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="estado" value="Completada">
+                                            <button class="btn btn-ws-pill-outline btn-sm" type="submit">Completar</button>
+                                        </form>
+                                    {% else %}
+                                        <span class="text-secondary small">—</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-secondary small">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
                     {% empty %}
-                    <tr><td colspan="5"><div class="ws-empty-state"><i class="bi bi-signpost-split"></i><p>Aún no hay servicios asignados.</p></div></td></tr>
+                        <tr>
+                            <td colspan="5">
+                                <div class="ws-empty-state text-center py-4">
+                                    <i class="bi bi-signpost-split"></i>
+                                    <p class="mb-0">Aún no hay servicios asignados.</p>
+                                </div>
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
